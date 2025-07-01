@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ask Samiq | AI Assistant</title>
+  <link rel="icon" type="image/png" href="chatbot1.ico">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #2563eb;
+      --secondary-color: #1d4ed8;
+      --text-color: #1f2937;
+      --light-bg: #f3f4f6;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--light-bg);
+      color: var(--text-color);
+      line-height: 1.5;
+      margin: 0;
+      padding: 0;
+    }
+    
+    header {
+ background: linear-gradient(135deg, #020d2c 0%, #3cd6ff 100%);
+
+
+      color: white;
+      padding: 2.5rem 1rem;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+    
+    h1 {
+      margin: 0;
+      font-size: 2.25rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+    }
+    
+    .subtitle {
+      margin-top: 1rem;
+      font-size: 1.125rem;
+      opacity: 0.95;
+      max-width: 42rem;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.6;
+    }
+    
+    .chat-container {
+      padding: 2rem 1rem;
+      max-width: 64rem;
+      margin: 0 auto;
+    }
+    
+    .chat-wrapper {
+      position: relative;
+      border-radius: 0.75rem;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      height: 40rem;
+      background: white;
+      border: 1px solid #e5e7eb;
+    }
+    
+    .chat-iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    
+    .loading-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      z-index: 10;
+    }
+    
+    .spinner {
+      width: 3rem;
+      height: 3rem;
+      border: 0.375rem solid #e5e7eb;
+      border-top-color: var(--primary-color);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+      gap: 1.5rem;
+      margin: 3rem auto;
+      max-width: 64rem;
+    }
+    
+    .feature-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 0.5rem;
+      box-shadow: var(--shadow);
+      transition: all 0.3s ease;
+      opacity: 0;
+      transform: translateY(1.25rem);
+    }
+    
+    .feature-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .feature-card:hover {
+      transform: translateY(-0.25rem);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+    
+    .feature-icon {
+      font-size: 2rem;
+      color: var(--primary-color);
+      margin-bottom: 1rem;
+    }
+    
+   
+    .social-links {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+    
+    .social-links a {
+      color: var(--primary-color);
+      font-size: 1.5rem;
+      transition: all 0.3s ease;
+    }
+    
+    .social-links a:hover {
+      color: var(--secondary-color);
+      transform: translateY(-0.25rem);
+    }
+    
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 1.875rem;
+      }
+      
+      .subtitle {
+        font-size: 1rem;
+        padding: 0 1rem;
+      }
+      
+      .chat-wrapper {
+        height: 32rem;
+      }
+    }
+     /* Footer styles */
+        footer {
+            width: 100%;
+            padding: 2rem 0;
+            background-color: #0f172a;
+            color: white;
+            overflow-x: hidden;
+        }
+        
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        @media (min-width: 768px) {
+            .footer-content {
+                flex-direction: row;
+                justify-content: space-between;
+            }
+        }
+        
+        .footer-logo {
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        @media (min-width: 768px) {
+            .footer-logo {
+                margin-bottom: 0;
+                text-align: left;
+            }
+        }
+        
+        .footer-logo a {
+            font-size: 1.25rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        
+        .footer-logo span {
+            color: #60a5fa;
+        }
+        
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        
+        @media (min-width: 768px) {
+            .footer-links {
+                margin-bottom: 0;
+                gap: 1.5rem;
+            }
+        }
+        
+        .footer-links a {
+            font-size: 0.875rem;
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        @media (min-width: 768px) {
+            .footer-links a {
+                font-size: 1rem;
+            }
+        }
+        
+        .footer-links a:hover {
+            color: #60a5fa;
+        }
+        
+        .footer-copyright {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            text-align: center;
+        }
+        
+        @media (min-width: 768px) {
+            .footer-copyright {
+                font-size: 0.875rem;
+                text-align: left;
+            }
+        }
+        
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1><i class="fas fa-robot"></i> Ask about Samiq - from his AI Assistant</h1>
+    <p class="subtitle"> Curious about me? Just ask — I'm here to chat!</p>
+  </header>
+
+  <div class="chat-container">
+    <div class="chat-wrapper">
+      <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p>Loading AI Assistant...</p>
+      </div>
+      <iframe 
+        class="chat-iframe"
+        src="https://www.chatbase.co/chatbot-iframe/AbLKm249maEFyDBk8Wyo6"
+        title="Samiq AI Assistant"
+        allow="microphone"
+        sandbox="allow-scripts allow-same-origin allow-forms"
+        loading="eager"
+        onload="document.getElementById('loadingOverlay').style.display = 'none';"
+        onerror="document.getElementById('loadingOverlay').querySelector('p').textContent = 'Error loading chatbot. Please refresh the page.';"
+      ></iframe>
+    </div>
+    
+    
+  </div>
+
+ <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <a href="#home">
+                        <span>Syed Samiq</span> Abbas Bukhari
+                    </a>
+                </div>
+                
+                <div class="footer-links">
+                    <a href="index.html#home">Home</a>
+                    <a href="certifications.html">Achievements</a>
+                    <a href="index.html#about">About University</a>
+                    <a href="index.html#projects">Subjects</a>
+                    <a href="index.html#experience">Journey</a>
+                    <a href="index.html#contact">Contact</a>
+                </div>
+                
+                <div class="footer-copyright">
+                    &copy; 2025. All rights reserved.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Animate feature cards on scroll
+      const featureCards = document.querySelectorAll('.feature-card');
+      
+      const animateOnScroll = () => {
+        featureCards.forEach((card, index) => {
+          const cardPosition = card.getBoundingClientRect().top;
+          const screenPosition = window.innerHeight / 1.3;
+          
+          if (cardPosition < screenPosition) {
+            setTimeout(() => {
+              card.classList.add('visible');
+            }, 150 * index);
+          }
+        });
+      };
+      
+      // Initial check
+      animateOnScroll();
+      
+      // Check on scroll
+      window.addEventListener('scroll', animateOnScroll);
+      
+      // Fallback for iframe loading
+      setTimeout(() => {
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        if (loadingOverlay.style.display !== 'none') {
+          loadingOverlay.querySelector('p').textContent = 'Having trouble loading. Please check your connection.';
+        }
+      }, 8000);
+    });
+  </script>
+</body>
+</html>

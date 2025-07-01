@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <link rel="icon" type="image/png" href="game.ico">
+    <title>Rock Paper Scissors</title>
+    <style>
+        /* Navigation Bar Styles */
+        nav.fixed {
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            z-index: 50;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+
+        .dark nav.fixed {
+            background-color: rgba(15, 23, 42, 0.8);
+        }
+
+        .nav-container {
+            max-width: 1280px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
+
+        .nav-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo a {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e293b;
+            text-decoration: none;
+        }
+
+        .dark .nav-logo a {
+            color: white;
+        }
+
+        .nav-logo span {
+            color: #3b82f6;
+        }
+
+        .nav-items {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        #theme-toggle {
+            padding: 0.5rem;
+            border-radius: 9999px;
+            background-color: transparent;
+            cursor: pointer;
+            border: none;
+        }
+
+        #theme-toggle:hover {
+            background-color: #e2e8f0;
+        }
+
+        .dark #theme-toggle:hover {
+            background-color: #334155;
+        }
+
+        .nav-link {
+            padding-left: 1rem;
+            padding-right: 1rem;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+            color: #334155;
+            text-decoration: none;
+        }
+
+        .dark .nav-link {
+            color: #cbd5e1;
+        }
+
+        .nav-link:hover {
+            color: #3b82f6;
+        }
+
+        .dark .nav-link:hover {
+            color: #60a5fa;
+        }
+
+        /* Footer styles */
+        footer {
+            width: 100%;
+            padding: 2rem 0;
+            background-color: #0f172a;
+            color: white;
+            overflow-x: hidden;
+        }
+        
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        @media (min-width: 768px) {
+            .footer-content {
+                flex-direction: row;
+                justify-content: space-between;
+            }
+        }
+        
+        .footer-logo {
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        @media (min-width: 768px) {
+            .footer-logo {
+                margin-bottom: 0;
+                text-align: left;
+            }
+        }
+        
+        .footer-logo a {
+            font-size: 1.25rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        
+        .footer-logo span {
+            color: #60a5fa;
+        }
+        
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        
+        @media (min-width: 768px) {
+            .footer-links {
+                margin-bottom: 0;
+                gap: 1.5rem;
+            }
+        }
+        
+        .footer-links a {
+            font-size: 0.875rem;
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        @media (min-width: 768px) {
+            .footer-links a {
+                font-size: 1rem;
+            }
+        }
+        
+        .footer-links a:hover {
+            color: #60a5fa;
+        }
+        
+        .footer-copyright {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            text-align: center;
+        }
+        
+        @media (min-width: 768px) {
+            .footer-copyright {
+                font-size: 0.875rem;
+                text-align: left;
+            }
+        }
+
+        /* Game styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f5f5f5;
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .dark body {
+            background: #1a1a1a;
+            color: #f0f0f0;
+        }
+
+        main {
+            flex: 1;
+            padding: 100px 20px 60px;
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+
+        .dark h1 {
+            color: #f0f0f0;
+        }
+
+        .choices {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .choice-btn {
+            background: white;
+            border: 2px solid #3498db;
+            border-radius: 10px;
+            padding: 15px 25px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .dark .choice-btn {
+            background: #333;
+            border-color: #60a5fa;
+            color: white;
+        }
+
+        .choice-btn:hover {
+            transform: scale(1.05);
+            background: #3498db;
+            color: white;
+        }
+
+        .dark .choice-btn:hover {
+            background: #60a5fa;
+        }
+
+        .results {
+            margin-top: 30px;
+            font-size: 20px;
+        }
+
+        .score {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+
+        .game-history {
+            margin-top: 30px;
+            border-top: 1px solid #ddd;
+            padding-top: 20px;
+        }
+
+        .dark .game-history {
+            border-top-color: #444;
+        }
+
+        .history-item {
+            margin: 10px 0;
+            padding: 10px;
+            background: #eee;
+            border-radius: 5px;
+        }
+
+        .dark .history-item {
+            background: #333;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="fixed">
+        <div class="nav-container">
+            <div class="nav-flex">
+                <div class="nav-logo">
+                    <a href="index.html">
+                        <span>Syed Samiq</span> Abbas Bukhari
+                    </a>
+                </div>
+                <div class="nav-items">
+                    <button id="theme-toggle">
+                        <i class="fas fa-moon"></i>
+                        <i class="fas fa-sun"></i>
+                    </button>
+                    <a href="index.html" class="nav-link">Home</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <h1>Rock Paper Scissors</h1>
+        
+        <div class="choices">
+            <button class="choice-btn" data-choice="rock">Rock</button>
+            <button class="choice-btn" data-choice="paper">Paper</button>
+            <button class="choice-btn" data-choice="scissors">Scissors</button>
+        </div>
+        
+        <div class="results" id="results">
+            Choose your move to start the game!
+        </div>
+        
+        <div class="score" id="score">
+            Score: You 0 - 0 AI
+        </div>
+        
+        <div class="game-history" id="history">
+            <h3>Game History</h3>
+            <div id="history-items"></div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <a href="#home">
+                        <span>Syed Samiq</span> Abbas Bukhari
+                    </a>
+                </div>
+                
+                <div class="footer-links">
+                    <a href="index.html#home">Home</a>
+                    <a href="certifications.html">Achievements</a>
+                    <a href="index.html#about">About University</a>
+                    <a href="index.html#projects">Subjects</a>
+                    <a href="index.html#experience">Journey</a>
+                    <a href="index.html#contact">Contact</a>
+                </div>
+                
+                <div class="footer-copyright">
+                    &copy; 2025. All rights reserved.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Game variables
+        let userScore = 0;
+        let aiScore = 0;
+        let lastUserMove = null;
+        const historyItems = [];
+        
+        // DOM elements
+        const resultsDiv = document.getElementById('results');
+        const scoreDiv = document.getElementById('score');
+        const historyItemsDiv = document.getElementById('history-items');
+        const choiceButtons = document.querySelectorAll('.choice-btn');
+        
+        // AI move logic
+        function getAIMove() {
+            // 20% chance to counter last move, 80% random
+            if (lastUserMove && Math.random() < 0.2) {
+                // Counter the last move
+                if (lastUserMove === 'rock') return 'paper';
+                if (lastUserMove === 'paper') return 'scissors';
+                if (lastUserMove === 'scissors') return 'rock';
+            }
+            
+            // Random move
+            const moves = ['rock', 'paper', 'scissors'];
+            return moves[Math.floor(Math.random() * moves.length)];
+        }
+        
+        // Determine winner
+        function determineWinner(userChoice, aiChoice) {
+            if (userChoice === aiChoice) return 'draw';
+            
+            if (
+                (userChoice === 'rock' && aiChoice === 'scissors') ||
+                (userChoice === 'paper' && aiChoice === 'rock') ||
+                (userChoice === 'scissors' && aiChoice === 'paper')
+            ) {
+                return 'user';
+            }
+            
+            return 'ai';
+        }
+        
+        // Update game state
+        function playRound(userChoice) {
+            lastUserMove = userChoice;
+            const aiChoice = getAIMove();
+            const result = determineWinner(userChoice, aiChoice);
+            
+            // Update scores
+            if (result === 'user') userScore++;
+            if (result === 'ai') aiScore++;
+            
+            // Display results
+            let resultText = `You chose ${userChoice}, AI chose ${aiChoice}. `;
+            if (result === 'draw') {
+                resultText += "It's a draw!";
+            } else if (result === 'user') {
+                resultText += "You win!";
+            } else {
+                resultText += "AI wins!";
+            }
+            
+            resultsDiv.textContent = resultText;
+            scoreDiv.textContent = `Score: You ${userScore} - ${aiScore} AI`;
+            
+            // Add to history
+            const historyItem = {
+                userChoice,
+                aiChoice,
+                result,
+                timestamp: new Date().toLocaleTimeString()
+            };
+            
+            historyItems.unshift(historyItem);
+            updateHistoryDisplay();
+        }
+        
+        // Update history display
+        function updateHistoryDisplay() {
+            historyItemsDiv.innerHTML = historyItems.slice(0, 5).map(item => {
+                let resultText;
+                if (item.result === 'draw') resultText = "Draw";
+                else if (item.result === 'user') resultText = "You won";
+                else resultText = "AI won";
+                
+                return `
+                    <div class="history-item">
+                        ${item.timestamp}: You chose ${item.userChoice}, AI chose ${item.aiChoice} - ${resultText}
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Event listeners
+        choiceButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                playRound(button.dataset.choice);
+            });
+        });
+        
+        // Theme toggle functionality
+        document.getElementById('theme-toggle').addEventListener('click', function() {
+            document.body.classList.toggle('dark');
+            
+            // Save preference to localStorage
+            const isDark = document.body.classList.contains('dark');
+            localStorage.setItem('darkMode', isDark);
+        });
+
+        // Check for saved theme preference
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark');
+        }
+    </script>
+</body>
+</html>

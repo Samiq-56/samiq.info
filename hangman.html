@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="game.ico">
+    <title>Hangman Game</title>
+    <style>
+        /* Navigation Bar Styles */
+        nav.fixed {
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            z-index: 50;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        .dark nav.fixed {
+            background-color: rgba(15, 23, 42, 0.8);
+        }
+
+        .nav-container {
+            max-width: 1280px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
+
+        .nav-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo a {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e293b;
+            text-decoration: none;
+        }
+
+        .dark .nav-logo a {
+            color: white;
+        }
+
+        .nav-logo span {
+            color: #3b82f6;
+        }
+
+        .nav-items {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        #theme-toggle {
+            padding: 0.5rem;
+            border-radius: 9999px;
+            background-color: transparent;
+            cursor: pointer;
+            border: none;
+        }
+
+        #theme-toggle:hover {
+            background-color: #e2e8f0;
+        }
+
+        .dark #theme-toggle:hover {
+            background-color: #334155;
+        }
+
+        .nav-link {
+            padding-left: 1rem;
+            padding-right: 1rem;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+            color: #334155;
+            text-decoration: none;
+        }
+
+        .dark .nav-link {
+            color: #cbd5e1;
+        }
+
+        .nav-link:hover {
+            color: #3b82f6;
+        }
+
+        .dark .nav-link:hover {
+            color: #60a5fa;
+        }
+
+        /* Icon styles */
+        .fa-moon, .fa-sun {
+            font-size: 1rem;
+        }
+
+        .dark .fa-sun {
+            color: #facc15;
+        }
+
+        .dark .fa-moon {
+            display: none;
+        }
+
+        .fa-sun {
+            display: none;
+        }
+
+        .dark .fa-sun {
+            display: block;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background: #f5f5f5;
+            color: #333;
+        }
+        
+        .game-container {
+            text-align: center;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+            margin: 20px;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        
+        .hangman-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .hangman-drawing {
+            font-family: monospace;
+            white-space: pre;
+            font-size: 18px;
+            margin-bottom: 20px;
+            min-height: 150px;
+        }
+        
+        .word-display {
+            font-size: 2em;
+            letter-spacing: 10px;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        
+        .keyboard {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 5px;
+            margin: 20px 0;
+        }
+        
+        .letter-btn {
+            width: 40px;
+            height: 40px;
+            font-size: 1.2em;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            background: #3b82f6;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .letter-btn:hover:not(:disabled) {
+            background: #2563eb;
+        }
+        
+        .letter-btn:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+        }
+        
+        .letter-btn.correct {
+            background: #10b981;
+        }
+        
+        .letter-btn.wrong {
+            background: #ef4444;
+        }
+        
+        .game-info {
+            margin: 20px 0;
+            font-size: 1.2em;
+        }
+        
+        .controls {
+            margin-top: 20px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            margin: 0 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+        }
+        
+        .reset-btn {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .hint-btn {
+            background: #f59e0b;
+            color: white;
+        }
+        
+        @media (max-width: 500px) {
+            .letter-btn {
+                width: 30px;
+                height: 30px;
+                font-size: 1em;
+            }
+            
+            .word-display {
+                font-size: 1.5em;
+                letter-spacing: 5px;
+            }
+        }
+        
+        /* Footer styles */
+        footer {
+            width: 100%;
+            padding: 2rem 0;
+            background-color: #0f172a;
+            color: white;
+            overflow-x: hidden;
+        }
+        
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        @media (min-width: 768px) {
+            .footer-content {
+                flex-direction: row;
+                justify-content: space-between;
+            }
+        }
+        
+        .footer-logo {
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        @media (min-width: 768px) {
+            .footer-logo {
+                margin-bottom: 0;
+                text-align: left;
+            }
+        }
+        
+        .footer-logo a {
+            font-size: 1.25rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        
+        .footer-logo span {
+            color: #60a5fa;
+        }
+        
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        
+        @media (min-width: 768px) {
+            .footer-links {
+                margin-bottom: 0;
+                gap: 1.5rem;
+            }
+        }
+        
+        .footer-links a {
+            font-size: 0.875rem;
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        @media (min-width: 768px) {
+            .footer-links a {
+                font-size: 1rem;
+            }
+        }
+        
+        .footer-links a:hover {
+            color: #60a5fa;
+        }
+        
+        .footer-copyright {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            text-align: center;
+        }
+        
+        @media (min-width: 768px) {
+            .footer-copyright {
+                font-size: 0.875rem;
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="fixed">
+        <div class="nav-container">
+            <div class="nav-flex">
+                <div class="nav-logo">
+                    <a href="index.html">
+                        <span>Syed Samiq</span> Abbas Bukhari
+                    </a>
+                </div>
+                <div class="nav-items">
+                    <button id="theme-toggle">
+                        <i class="fas fa-moon"></i>
+                        <i class="fas fa-sun"></i>
+                    </button>
+                    <a href="index.html" class="nav-link">Home</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="game-container">
+        <h1>Hangman Game</h1>
+        
+        <div class="hangman-container">
+            <div class="hangman-drawing" id="hangman-drawing"></div>
+            <div class="word-display" id="word-display"></div>
+        </div>
+        
+        <div class="game-info" id="game-info">
+            Guess the word! You have 6 attempts remaining.
+        </div>
+        
+        <div class="keyboard" id="keyboard"></div>
+        
+        <div class="controls">
+            <button class="hint-btn" id="hint-btn">Hint</button>
+            <button class="reset-btn" id="reset-btn">New Game</button>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <a href="#home">
+                        <span>Syed Samiq</span> Abbas Bukhari
+                    </a>
+                </div>
+                
+                <div class="footer-links">
+                    <a href="index.html#home">Home</a>
+                    <a href="certifications.html">Achievements</a>
+                    <a href="index.html#about">About University</a>
+                    <a href="index.html#projects">Subjects</a>
+                    <a href="index.html#experience">Journey</a>
+                    <a href="index.html#contact">Contact</a>
+                </div>
+                
+                <div class="footer-copyright">
+                    &copy; 2025. All rights reserved.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Hangman drawings for each wrong attempt
+         const hangmanDrawings = [
+    `
+      +---+
+      |   |
+          |
+          |
+          |
+          |
+    =========`,
+    `
+      +---+
+      |   |
+      O   |
+          |
+          |
+          |
+    =========`,
+    `
+      +---+
+      |   |
+      O   |
+      |   |
+          |
+          |
+    =========`,
+    `
+      +---+
+      |   |
+      O   |
+     /|   |
+          |
+          |
+    =========`,
+    `
+      +---+
+      |   |
+      O   |
+     /|\\  |
+          |
+          |
+    =========`,
+    `
+      +---+
+      |   |
+      O   |
+     /|\\  |
+     /    |
+          |
+    =========`,
+    `
+      +---+
+      |   |
+      O   |
+     /|\\  |
+     / \\  |
+          |
+    =========`,
+    // Additional stages for 9 attempts
+    `
+      +---+
+      |   |
+     [O   |
+     /|\\  |
+     / \\  |
+          |
+    =========`,
+    `
+      +---+
+      |   |
+     [O]  |
+     /|\\  |
+     / \\  |
+          |
+    =========`
+];
+
+            // Word categories and words
+            const wordCategories = {
+                animals: ['ELEPHANT', 'GIRAFFE', 'KANGAROO', 'DOLPHIN', 'CHEETAH'],
+                countries: ['CANADA', 'BRAZIL', 'JAPAN', 'GERMANY', 'AUSTRALIA'],
+                fruits: ['BANANA', 'PINEAPPLE', 'WATERMELON', 'STRAWBERRY', 'BLUEBERRY'],
+                sports: ['FOOTBALL', 'BASKETBALL', 'TENNIS', 'SWIMMING', 'VOLLEYBALL']
+            };
+
+            // Game variables
+            let selectedWord = '';
+            let guessedLetters = [];
+            let wrongAttempts = 0;
+            let maxAttempts = 9;
+            let gameOver = false;
+            let currentCategory = '';
+
+            // DOM elements
+            const hangmanDrawing = document.getElementById('hangman-drawing');
+            const wordDisplay = document.getElementById('word-display');
+            const gameInfo = document.getElementById('game-info');
+            const keyboard = document.getElementById('keyboard');
+            const hintBtn = document.getElementById('hint-btn');
+            const resetBtn = document.getElementById('reset-btn');
+
+            // Initialize the game
+            function initGame() {
+                // Select a random category
+                const categories = Object.keys(wordCategories);
+                currentCategory = categories[Math.floor(Math.random() * categories.length)];
+                
+                // Select a random word from the category
+                const words = wordCategories[currentCategory];
+                selectedWord = words[Math.floor(Math.random() * words.length)];
+                
+                // Reset game state
+                guessedLetters = [];
+                wrongAttempts = 0;
+                gameOver = false;
+                
+                // Update UI
+                updateHangmanDrawing();
+                updateWordDisplay();
+                updateGameInfo();
+                createKeyboard();
+                
+                // Enable all buttons
+                const buttons = document.querySelectorAll('.letter-btn');
+                buttons.forEach(button => {
+                    button.disabled = false;
+                    button.classList.remove('correct', 'wrong');
+                });
+                
+                // Enable hint button
+                hintBtn.disabled = false;
+            }
+
+            // Update hangman drawing based on wrong attempts
+            function updateHangmanDrawing() {
+                hangmanDrawing.textContent = hangmanDrawings[wrongAttempts];
+            }
+
+            // Update the word display with guessed letters
+            function updateWordDisplay() {
+                const display = selectedWord.split('').map(letter => {
+                    return guessedLetters.includes(letter) ? letter : '_';
+                }).join(' ');
+                
+                wordDisplay.textContent = display;
+                
+                // Check if player has won
+                if (!display.includes('_')) {
+                    gameOver = true;
+                    gameInfo.textContent = `Congratulations! You guessed the word: ${selectedWord}`;
+                    disableKeyboard();
+                }
+            }
+
+            // Update game information
+        function updateGameInfo() {
+    const remainingAttempts = maxAttempts - wrongAttempts;
+    gameInfo.textContent = `Category: ${currentCategory.toUpperCase()} | Attempts left: ${remainingAttempts}`;
+    
+    if (wrongAttempts >= maxAttempts) {
+        gameOver = true;
+        gameInfo.textContent = `Game Over! The word was: ${selectedWord}`;
+        disableKeyboard();
+    }
+}
+
+            // Create keyboard buttons
+            function createKeyboard() {
+                keyboard.innerHTML = '';
+                
+                for (let i = 65; i <= 90; i++) {
+                    const letter = String.fromCharCode(i);
+                    const button = document.createElement('button');
+                    
+                    button.textContent = letter;
+                    button.className = 'letter-btn';
+                    button.dataset.letter = letter;
+                    
+                    button.addEventListener('click', () => handleLetterClick(letter));
+                    
+                    keyboard.appendChild(button);
+                }
+            }
+
+            // Handle letter button click
+            function handleLetterClick(letter) {
+                if (gameOver) return;
+                
+                // Mark letter as guessed
+                guessedLetters.push(letter);
+                
+                // Check if letter is in the word
+                if (selectedWord.includes(letter)) {
+                    // Correct guess
+                    document.querySelector(`.letter-btn[data-letter="${letter}"]`).classList.add('correct');
+                    updateWordDisplay();
+                } else {
+                    // Wrong guess
+                    document.querySelector(`.letter-btn[data-letter="${letter}"]`).classList.add('wrong');
+                    wrongAttempts++;
+                    updateHangmanDrawing();
+                    updateGameInfo();
+                }
+                
+                // Disable the clicked button
+                document.querySelector(`.letter-btn[data-letter="${letter}"]`).disabled = true;
+            }
+
+            // Disable all keyboard buttons
+            function disableKeyboard() {
+                const buttons = document.querySelectorAll('.letter-btn');
+                buttons.forEach(button => {
+                    button.disabled = true;
+                });
+                hintBtn.disabled = true;
+            }
+
+            // Handle hint button click
+            function handleHint() {
+                if (gameOver) return;
+                
+                // Find letters not yet guessed
+                const unguessedLetters = selectedWord.split('').filter(letter => {
+                    return !guessedLetters.includes(letter);
+                });
+                
+                if (unguessedLetters.length > 0) {
+                    // Reveal a random unguessed letter
+                    const randomLetter = unguessedLetters[Math.floor(Math.random() * unguessedLetters.length)];
+                    handleLetterClick(randomLetter);
+                    
+                    // Disable hint button after use
+                    hintBtn.disabled = true;
+                }
+            }
+
+            // Event listeners
+            hintBtn.addEventListener('click', handleHint);
+            resetBtn.addEventListener('click', initGame);
+
+            // Initialize the game on page load
+            initGame();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="game.ico">
+    <title>Flappy Bird</title>
+    <style>
+        /* Navigation Bar Styles */
+        nav.fixed {
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            z-index: 50;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        .dark nav.fixed {
+            background-color: rgba(15, 23, 42, 0.8);
+        }
+
+        .nav-container {
+            max-width: 1280px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
+
+        .nav-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo a {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e293b;
+            text-decoration: none;
+        }
+
+        .dark .nav-logo a {
+            color: white;
+        }
+
+        .nav-logo span {
+            color: #3b82f6;
+        }
+
+        .nav-items {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        #theme-toggle {
+            padding: 0.5rem;
+            border-radius: 9999px;
+            background-color: transparent;
+            cursor: pointer;
+            border: none;
+        }
+
+        #theme-toggle:hover {
+            background-color: #e2e8f0;
+        }
+
+        .dark #theme-toggle:hover {
+            background-color: #334155;
+        }
+
+        .nav-link {
+            padding-left: 1rem;
+            padding-right: 1rem;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+            color: #334155;
+            text-decoration: none;
+        }
+
+        .dark .nav-link {
+            color: #cbd5e1;
+        }
+
+        .nav-link:hover {
+            color: #3b82f6;
+        }
+
+        .dark .nav-link:hover {
+            color: #60a5fa;
+        }
+
+        /* Icon styles */
+        .fa-moon, .fa-sun {
+            font-size: 1rem;
+        }
+
+        .dark .fa-sun {
+            color: #facc15;
+        }
+
+        .dark .fa-moon {
+            display: none;
+        }
+
+        .fa-sun {
+            display: none;
+        }
+
+        .dark .fa-sun {
+            display: block;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #4ec0ca;
+            overflow: hidden;
+        }
+
+        .dark body {
+            background: #1e293b;
+        }
+
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        h1 {
+            color: #facc15;
+            margin-bottom: 10px;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .dark h1 {
+            color: #3b82f6;
+        }
+
+        #game-canvas {
+            background-color: #4ec0ca;
+            border: 4px solid #3b82f6;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+        }
+
+        .dark #game-canvas {
+            background-color: #1e293b;
+            border-color: #60a5fa;
+        }
+
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            width: 400px;
+            margin: 10px 0;
+            font-size: 1.2em;
+            color: white;
+        }
+
+        .dark .game-info {
+            color: #cbd5e1;
+        }
+
+        .controls {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 0 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            background: #3b82f6;
+            color: white;
+        }
+
+        button:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+        }
+
+        .dark button {
+            background: #2563eb;
+        }
+
+        .game-over {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(15, 23, 42, 0.9);
+            padding: 20px 40px;
+            border-radius: 10px;
+            text-align: center;
+            display: none;
+            z-index: 100;
+            color: white;
+        }
+
+        .dark .game-over {
+            background: rgba(30, 41, 59, 0.9);
+        }
+
+        .game-over h2 {
+            color: #ef4444;
+            margin-top: 0;
+        }
+
+        .game-over p {
+            font-size: 1.2em;
+            margin: 10px 0;
+        }
+
+        .instructions {
+            margin-top: 10px;
+            color: white;
+            text-align: center;
+        }
+
+        .dark .instructions {
+            color: #cbd5e1;
+        }
+
+        /* Footer styles */
+        footer {
+            width: 100%;
+            padding: 2rem 0;
+            background-color: #0f172a;
+            color: white;
+            position: fixed;
+            bottom: 0;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        @media (min-width: 768px) {
+            .footer-content {
+                flex-direction: row;
+                justify-content: space-between;
+            }
+        }
+
+        .footer-logo {
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        @media (min-width: 768px) {
+            .footer-logo {
+                margin-bottom: 0;
+                text-align: left;
+            }
+        }
+
+        .footer-logo a {
+            font-size: 1.25rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .footer-logo span {
+            color: #60a5fa;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .footer-links {
+                margin-bottom: 0;
+                gap: 1.5rem;
+            }
+        }
+
+        .footer-links a {
+            font-size: 0.875rem;
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        @media (min-width: 768px) {
+            .footer-links a {
+                font-size: 1rem;
+            }
+        }
+
+        .footer-links a:hover {
+            color: #60a5fa;
+        }
+
+        .footer-copyright {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            text-align: center;
+        }
+
+        @media (min-width: 768px) {
+            .footer-copyright {
+                font-size: 0.875rem;
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="fixed">
+        <div class="nav-container">
+            <div class="nav-flex">
+                <div class="nav-logo">
+                    <a href="index.html">
+                        <span>Syed Samiq</span> Abbas Bukhari
+                    </a>
+                </div>
+                <div class="nav-items">
+                    <button id="theme-toggle">
+                        <i class="fas fa-moon"></i>
+                        <i class="fas fa-sun"></i>
+                    </button>
+                    <a href="index.html" class="nav-link">Home</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="game-container">
+        <h1>Flappy Bird</h1>
+        
+        <div class="game-info">
+            <div id="score">Score: 0</div>
+            <div id="high-score">High Score: 0</div>
+        </div>
+        
+        <canvas id="game-canvas" width="400" height="600"></canvas>
+        
+        <div class="instructions">
+            Press SPACE or tap to flap wings!
+        </div>
+        
+        <div class="controls">
+            <button id="start-btn">Start Game</button>
+            <button id="reset-btn">Reset Game</button>
+        </div>
+        
+        <div class="game-over" id="game-over">
+            <h2>Game Over!</h2>
+            <p id="final-score">Your score: 0</p>
+            <p id="final-high-score">High score: 0</p>
+            <button id="restart-btn">Play Again</button>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <a href="#home">
+                        <span>Syed Samiq</span> Abbas Bukhari
+                    </a>
+                </div>
+                
+                <div class="footer-links">
+                    <a href="index.html#home">Home</a>
+                    <a href="certifications.html">Achievements</a>
+                    <a href="index.html#about">About University</a>
+                    <a href="index.html#projects">Subjects</a>
+                    <a href="index.html#experience">Journey</a>
+                    <a href="index.html#contact">Contact</a>
+                </div>
+                
+                <div class="footer-copyright">
+                    &copy; 2025. All rights reserved.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Game elements
+            const canvas = document.getElementById('game-canvas');
+            const ctx = canvas.getContext('2d');
+            const scoreDisplay = document.getElementById('score');
+            const highScoreDisplay = document.getElementById('high-score');
+            const startBtn = document.getElementById('start-btn');
+            const resetBtn = document.getElementById('reset-btn');
+            const gameOverScreen = document.getElementById('game-over');
+            const finalScore = document.getElementById('final-score');
+            const finalHighScore = document.getElementById('final-high-score');
+            const restartBtn = document.getElementById('restart-btn');
+            
+            // Game variables
+            let score = 0;
+            let highScore = localStorage.getItem('flappyHighScore') || 0;
+            let gameRunning = false;
+            let animationId;
+            
+            // Bird properties
+            const bird = {
+                x: 100,
+                y: canvas.height / 2,
+                width: 40,
+                height: 30,
+                gravity: 0.5,
+                velocity: 0,
+                jump: -10,
+                color: '#facc15'
+            };
+            
+            // Pipes
+            let pipes = [];
+            const pipeWidth = 60;
+            const pipeGap = 150;
+            const pipeSpeed = 3;
+            let pipeFrequency = 120; // frames
+            let frameCount = 0;
+            
+            // Background
+            const background = {
+                x: 0,
+                speed: 1,
+                img: new Image()
+            };
+            background.img.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iNjAwIiB2aWV3Qm94PSIwIDAgNDAwIDYwMCI+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSI2MDAiIGZpbGw9IiM0ZWMwY2EiLz48L3N2Zz4=';
+            
+            // Ground
+            const ground = {
+                y: canvas.height - 60,
+                height: 60,
+                color: '#8B4513'
+            };
+            
+            // Cloud
+            let clouds = [];
+            
+            // Initialize game
+            function initGame() {
+                // Reset variables
+                score = 0;
+                bird.y = canvas.height / 2;
+                bird.velocity = 0;
+                pipes = [];
+                frameCount = 0;
+                gameRunning = false;
+                
+                // Update displays
+                scoreDisplay.textContent = `Score: ${score}`;
+                highScoreDisplay.textContent = `High Score: ${highScore}`;
+                
+                // Hide game over screen
+                gameOverScreen.style.display = 'none';
+                
+                // Create initial clouds
+                createClouds();
+                
+                // Draw initial state
+                draw();
+            }
+            
+            // Create clouds
+            function createClouds() {
+                clouds = [];
+                for (let i = 0; i < 5; i++) {
+                    clouds.push({
+                        x: Math.random() * canvas.width,
+                        y: Math.random() * (canvas.height / 3),
+                        width: 60 + Math.random() * 60,
+                        height: 30 + Math.random() * 30,
+                        speed: 0.5 + Math.random() * 1
+                    });
+                }
+            }
+            
+            // Start game
+            function startGame() {
+                if (!gameRunning) {
+                    gameRunning = true;
+                    gameLoop();
+                }
+            }
+            
+            // Game loop
+            function gameLoop() {
+                if (!gameRunning) return;
+                
+                // Clear canvas
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Update game state
+                update();
+                
+                // Draw everything
+                draw();
+                
+                // Check collision
+                if (checkCollision()) {
+                    gameOver();
+                    return;
+                }
+                
+                // Continue animation
+                animationId = requestAnimationFrame(gameLoop);
+            }
+            
+            // Update game state
+            function update() {
+                // Update bird
+                bird.velocity += bird.gravity;
+                bird.y += bird.velocity;
+                
+                // Update pipes
+                if (frameCount % pipeFrequency === 0) {
+                    createPipe();
+                }
+                
+                for (let i = pipes.length - 1; i >= 0; i--) {
+                    pipes[i].x -= pipeSpeed;
+                    
+                    // Check if pipe is passed
+                    if (pipes[i].x + pipeWidth < bird.x && !pipes[i].passed) {
+                        pipes[i].passed = true;
+                        score++;
+                        scoreDisplay.textContent = `Score: ${score}`;
+                    }
+                    
+                    // Remove pipes that are off screen
+                    if (pipes[i].x + pipeWidth < 0) {
+                        pipes.splice(i, 1);
+                    }
+                }
+                
+                // Update clouds
+                clouds.forEach(cloud => {
+                    cloud.x -= cloud.speed;
+                    if (cloud.x + cloud.width < 0) {
+                        cloud.x = canvas.width;
+                        cloud.y = Math.random() * (canvas.height / 3);
+                    }
+                });
+                
+                frameCount++;
+            }
+            
+            // Draw everything
+            function draw() {
+                // Draw sky background
+                ctx.fillStyle = '#4ec0ca';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Draw clouds
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+                clouds.forEach(cloud => {
+                    ctx.beginPath();
+                    ctx.ellipse(cloud.x, cloud.y, cloud.width / 2, cloud.height / 2, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+                
+                // Draw pipes
+                ctx.fillStyle = '#10b981';
+                pipes.forEach(pipe => {
+                    // Top pipe
+                    ctx.fillRect(pipe.x, 0, pipeWidth, pipe.topHeight);
+                    
+                    // Bottom pipe
+                    ctx.fillRect(pipe.x, pipe.bottomY, pipeWidth, canvas.height - pipe.bottomY);
+                });
+                
+                // Draw ground
+                ctx.fillStyle = ground.color;
+                ctx.fillRect(0, ground.y, canvas.width, ground.height);
+                
+                // Draw bird
+                ctx.fillStyle = bird.color;
+                ctx.beginPath();
+                ctx.ellipse(bird.x, bird.y, bird.width / 2, bird.height / 2, 0, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Draw bird eye
+                ctx.fillStyle = 'white';
+                ctx.beginPath();
+                ctx.arc(bird.x + 10, bird.y - 5, 3, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Draw bird beak
+                ctx.fillStyle = '#f97316';
+                ctx.beginPath();
+                ctx.moveTo(bird.x + bird.width / 2, bird.y);
+                ctx.lineTo(bird.x + bird.width / 2 + 15, bird.y);
+                ctx.lineTo(bird.x + bird.width / 2 + 10, bird.y - 5);
+                ctx.closePath();
+                ctx.fill();
+            }
+            
+            // Create new pipe
+            function createPipe() {
+                const topHeight = Math.floor(Math.random() * (canvas.height - pipeGap - ground.height - 100)) + 20;
+                const bottomY = topHeight + pipeGap;
+                
+                pipes.push({
+                    x: canvas.width,
+                    topHeight: topHeight,
+                    bottomY: bottomY,
+                    passed: false
+                });
+            }
+            
+            // Check collision
+            function checkCollision() {
+                // Check if bird hits the ground or ceiling
+                if (bird.y + bird.height / 2 > ground.y || bird.y - bird.height / 2 < 0) {
+                    return true;
+                }
+                
+                // Check if bird hits any pipe
+                for (const pipe of pipes) {
+                    if (
+                        bird.x + bird.width / 2 > pipe.x && 
+                        bird.x - bird.width / 2 < pipe.x + pipeWidth && 
+                        (bird.y - bird.height / 2 < pipe.topHeight || 
+                         bird.y + bird.height / 2 > pipe.bottomY)
+                    ) {
+                        return true;
+                    }
+                }
+                
+                return false;
+            }
+            
+            // Game over
+            function gameOver() {
+                gameRunning = false;
+                cancelAnimationFrame(animationId);
+                
+                // Update high score
+                if (score > highScore) {
+                    highScore = score;
+                    localStorage.setItem('flappyHighScore', highScore);
+                    highScoreDisplay.textContent = `High Score: ${highScore}`;
+                }
+                
+                // Show game over screen
+                finalScore.textContent = `Your score: ${score}`;
+                finalHighScore.textContent = `High score: ${highScore}`;
+                gameOverScreen.style.display = 'block';
+            }
+            
+            // Make bird jump
+            function jump() {
+                if (!gameRunning) {
+                    startGame();
+                }
+                bird.velocity = bird.jump;
+            }
+            
+            // Event listeners
+            startBtn.addEventListener('click', startGame);
+            resetBtn.addEventListener('click', initGame);
+            restartBtn.addEventListener('click', () => {
+                initGame();
+                startGame();
+            });
+            
+            // Keyboard controls
+            document.addEventListener('keydown', (e) => {
+                if (e.code === 'Space') {
+                    e.preventDefault();
+                    jump();
+                }
+            });
+            
+            // Touch controls
+            canvas.addEventListener('click', jump);
+            canvas.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                jump();
+            });
+            
+            // Initialize game
+            initGame();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Achievements</title>
+  <link rel="icon" type="image/png" href="prize.ico"> <!-- ← Logo line -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+
+  <style>
+    :root {
+      --primary: #3b82f6;
+      --secondary: #10b981;
+      --dark: #1e293b;
+      --light: #f8fafc;
+    }
+    .dark {
+      --primary: #60a5fa;
+      --secondary: #34d399;
+      --dark: #f8fafc;
+      --light: #1e293b;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--light);
+      color: var(--dark);
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    .theme-transition * {
+      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    }
+    
+    /* Certifications Page CSS */
+    .certifications-page {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 80px 20px;
+    }
+    .cert-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 30px;
+      margin-top: 40px;
+    }
+    .cert-card {
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    .dark .cert-card {
+      background: #334155;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    }
+    .cert-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+    }
+    .dark .cert-card:hover {
+      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);
+    }
+    .cert-img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .dark .cert-img {
+      border-bottom-color: #475569;
+    }
+    .cert-info {
+      padding: 20px;
+    }
+    .cert-info h3 {
+      color: var(--dark);
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    .cert-info p {
+      color: #64748b;
+      margin-bottom: 0.5rem;
+    }
+    .dark .cert-info p {
+      color: #94a3b8;
+    }
+    .cert-date {
+      color: #64748b;
+      font-size: 0.875rem;
+      margin-top: 0.75rem;
+    }
+    .dark .cert-date {
+      color: #94a3b8;
+    }
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      margin-top: 40px;
+      padding: 10px 20px;
+      background: var(--primary);
+      color: white;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+    .back-btn:hover {
+      background: #2563eb;
+      transform: translateX(-3px);
+    }
+    .dark .back-btn:hover {
+      background: #1e40af;
+    }
+    
+    /* Certificate Modal */
+    .cert-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.9);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .cert-modal.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .modal-content {
+      background: white;
+      max-width: 90%;
+      max-height: 90vh;
+      border-radius: 8px;
+      overflow: auto;
+      position: relative;
+      transform: scale(0.9);
+      transition: transform 0.3s ease;
+    }
+    .dark .modal-content {
+      background: #1e293b;
+    }
+    .cert-modal.active .modal-content {
+      transform: scale(1);
+    }
+    .modal-cert-img {
+      width: 100%;
+      max-height: 70vh;
+      object-fit: contain;
+    }
+    .modal-info {
+      padding: 20px;
+    }
+    .close-modal {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: #ef4444;
+      color: white;
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .certifications-page {
+        padding: 60px 15px;
+      }
+      .cert-grid {
+        grid-template-columns: 1fr;
+      }
+      .modal-content {
+        max-width: 95%;
+        max-height: 95vh;
+      }
+    }
+
+     /* Footer styles */
+        footer {
+            width: 100%;
+            padding: 2rem 0;
+            background-color: #0f172a;
+            color: white;
+            overflow-x: hidden;
+        }
+        
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        @media (min-width: 768px) {
+            .footer-content {
+                flex-direction: row;
+                justify-content: space-between;
+            }
+        }
+        
+        .footer-logo {
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        @media (min-width: 768px) {
+            .footer-logo {
+                margin-bottom: 0;
+                text-align: left;
+            }
+        }
+        
+        .footer-logo a {
+            font-size: 1.25rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        
+        .footer-logo span {
+            color: #60a5fa;
+        }
+        
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        
+        @media (min-width: 768px) {
+            .footer-links {
+                margin-bottom: 0;
+                gap: 1.5rem;
+            }
+        }
+        
+        .footer-links a {
+            font-size: 0.875rem;
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        @media (min-width: 768px) {
+            .footer-links a {
+                font-size: 1rem;
+            }
+        }
+        
+        .footer-links a:hover {
+            color: #60a5fa;
+        }
+        
+        .footer-copyright {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            text-align: center;
+        }
+        
+        @media (min-width: 768px) {
+            .footer-copyright {
+                font-size: 0.875rem;
+                text-align: left;
+            }
+        }
+
+    
+  </style>
+</head>
+<body class="theme-transition">
+  <!-- Navigation -->
+  <nav class="fixed w-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-md z-50 shadow-sm">
+    <div class="container mx-auto px-6 py-4">
+      <div class="flex justify-between items-center">
+        <a href="index.html" class="text-2xl font-bold text-slate-800 dark:text-white">
+          <span class="text-blue-500">Syed Samiq </span> <span> Abbas Bukhari</span>
+        </a>
+        <div class="flex items-center space-x-4">
+          <button id="theme-toggle" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700">
+            <i class="fas fa-moon dark:hidden"></i>
+            <i class="fas fa-sun hidden dark:block text-yellow-300"></i>
+          </button>
+          <a href="index.html" class="px-4 py-2 text-slate-700 dark:text-slate-300 hover:text-blue-500 dark:hover:text-blue-400">Home</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+<br><br><br><br>
+  <!-- Certifications Content -->
+<div class="certifications-page">
+   <div class="certifications-container px-4" style="opacity: 0; animation: containerEntrance 1s cubic-bezier(0.19, 1, 0.22, 1) 0.1s forwards;">
+      <h1 class="text-3xl md:text-4xl font-bold text-center mb-4 text-slate-800 dark:text-white">
+         <span class="achievement-text" style="display: inline-block;">
+            My <span class="gradient-text" style="background: linear-gradient(90deg, #3b82f6, #06b6d4); -webkit-background-clip: text; background-clip: text; color: transparent; position: relative;">Achievements</span>
+         </span>
+      </h1>
+      <p class="text-lg text-center max-w-2xl mx-auto mb-12 text-slate-600 dark:text-slate-400" style="opacity: 0; animation: textFadeIn 1s ease-out 0.8s forwards;">
+         Credentials aren't given — they're earned through hard work, persistence, and the will to grow.
+      </p>
+   </div>
+</div>
+
+<style>
+   @keyframes containerEntrance {
+      0% { 
+         opacity: 0; 
+         transform: translateY(30px); 
+      }
+      100% { 
+         opacity: 1; 
+         transform: translateY(0); 
+      }
+   }
+   
+   @keyframes textFadeIn {
+      0% { 
+         opacity: 0; 
+      }
+      100% { 
+         opacity: 1; 
+      }
+   }
+   
+   .achievement-text {
+      animation: textFocusIn 1.2s cubic-bezier(0.55, 0.085, 0.68, 0.53) both;
+   }
+   
+   @keyframes textFocusIn {
+      0% {
+         transform: scale(0.9);
+         opacity: 0;
+      }
+      100% {
+         transform: scale(1);
+         opacity: 1;
+      }
+   }
+   
+   .gradient-text {
+      background-size: 200% auto;
+      animation: gradientFlow 4s ease infinite;
+   }
+   
+   @keyframes gradientFlow {
+      0% {
+         background-position: 0% center;
+         text-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+      }
+      50% {
+         background-position: 100% center;
+         text-shadow: 0 0 20px rgba(6, 182, 212, 0.5);
+      }
+      100% {
+         background-position: 0% center;
+         text-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+      }
+   }
+   
+   .gradient-text::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #3b82f6, #06b6d4);
+      animation: underlineExpand 1.5s ease-out 0.8s forwards;
+   }
+   
+   @keyframes underlineExpand {
+      0% { 
+         width: 0; 
+         left: 50%; 
+      }
+      100% { 
+         width: 100%; 
+         left: 0; 
+      }
+   }
+</style>
+
+
+
+    
+    <div class="cert-grid">
+      <!-- Certification 1 -->
+      <div class="cert-card" data-certificate="aws">
+        <img src="cm1.jpeg" alt="AWS Certified" class="cert-img">
+        <div class="cert-info">
+         <h3>Third Position</h3>
+         <p>CM English Debate Competition (MARKAZ Level)</p>
+
+ 
+        </div>
+      </div>
+      
+      <!-- Certification 2 -->
+      <div class="cert-card" data-certificate="react">
+        <img src="cm2.jpeg" alt="React Professional" class="cert-img">
+        <div class="cert-info">
+          <h3>Third Position</h3>
+          <p>CM English Debate Competition (Tehsil Level)</p>
+      
+        </div>
+      </div>
+      
+      <!-- Certification 3 -->
+      <div class="cert-card" data-certificate="node">
+        <img src="cm3.jpeg
+        " alt="Node.js Certified" class="cert-img">
+        <div class="cert-info">
+          <h3>First Position</h3>
+          <p>CM English Debate Competition (District Level)</p>
+         
+        </div>
+      </div>
+
+        <!-- Certification 4 -->
+      <div class="cert-card" data-certificate="react">
+        <img src="cm4.jpeg" alt="React Professional" class="cert-img">
+        <div class="cert-info">
+          <h3>First Position</h3>
+          <p>CM English Debate Competition (Division Level)</p>
+          
+        </div>
+      </div>
+      
+        <!-- Certification 5 -->
+      <div class="cert-card" data-certificate="react">
+        <img src="bise1.jpeg" alt="React Professional" class="cert-img">
+        <div class="cert-info">
+          <h3>First Position</h3>
+          <p>BISE Faisalabad (English Debate)</p>
+  
+        </div>
+      </div>
+
+         <!-- Certification 6 -->
+      <div class="cert-card" data-certificate="react">
+        <img src="bide2.jpeg" alt="React Professional" class="cert-img">
+        <div class="cert-info">
+          <h3>First Position</h3>
+          <p>BISE Faisalabad (English Debate)</p>
+        </div>
+      </div>
+
+         <!-- Certification 7 -->
+      <div class="cert-card" data-certificate="react">
+        <img src="bise3.jpeg" alt="React Professional" class="cert-img">
+        <div class="cert-info">
+          <h3>First Position</h3>
+          <p>BISE Faisalabad (English Debate)</p>
+        </div>
+      </div>
+
+
+         <!-- Certification 8 -->
+      <div class="cert-card" data-certificate="react">
+        <img src="bise4.jpeg" alt="React Professional" class="cert-img">
+        <div class="cert-info">
+          <h3>First Position</h3>
+          <p>BISE Faisalabad (English Debate)</p>
+        </div>
+      </div>
+
+         <!-- Certification 9 -->
+      <div class="cert-card" data-certificate="react">
+        <img src="nab1.jpeg" alt="React Professional" class="cert-img">
+        <div class="cert-info">
+          <h3>Third position</h3>
+          <p>NAB English Declamation (Provintial Level)</p>
+        </div>
+      </div>
+
+         <!-- Certification 10 -->
+      <div class="cert-card" data-certificate="react">
+        <img src="nab2.jpeg" alt="React Professional" class="cert-img">
+        <div class="cert-info">
+          <h3>Participated</h3>
+          <p>NAB English Declamation (Provintial Level)</p>
+        </div>
+      </div>
+
+        <!-- Certification 11 -->
+      <div class="cert-card" data-certificate="react">
+        <img src="nab3.jpeg" alt="React Professional" class="cert-img">
+        <div class="cert-info">
+          <h3>Participated</h3>
+          <p>NAB Urdu Declamation (Provintial Level)</p>
+        </div>
+      </div>
+
+         <!-- Certification 12 -->
+      <div class="cert-card" data-certificate="react">
+        <img src="nab4.jpeg" alt="React Professional" class="cert-img">
+        <div class="cert-info">
+          <h3>Participated</h3>
+          <p>NAB English Declamation (Provintial Level)</p>
+        </div>
+      </div>
+
+
+        <!-- Certification 13 -->
+      <div class="cert-card" data-certificate="react">
+        <img src="gov.jpeg" alt="React Professional" class="cert-img">
+        <div class="cert-info">
+          <h3>First Position</h3>
+          <p>Govt. Graduate College Faisalabad</p>
+        </div>
+      </div>
+
+         <!-- Certification 14 -->
+      <div class="cert-card" data-certificate="react">
+        <img src="kips.jpeg" alt="React Professional" class="cert-img">
+        <div class="cert-info">
+          <h3>First Position </h3>
+          <p>English Debate (Division Level)</p>
+        </div>
+      </div>
+
+       <!-- Certification 15 -->
+      <div class="cert-card" data-certificate="react">
+        <img src="best.jpeg" alt="React Professional" class="cert-img">
+        <div class="cert-info">
+          <h3>Best Speaker</h3>
+          <p>Awarded with title of <b>Best Speaker</b></p>
+        </div>
+      </div>
+
+         <!-- Certification 16 -->
+      <div class="cert-card" data-certificate="react">
+        <img src="dmc1.jpeg" alt="React Professional" class="cert-img">
+        <div class="cert-info">
+          <h3>First Position</h3>
+          <p>English Speech</p>
+        </div>
+      </div>
+
+       <!-- Certification 17 -->
+      <div class="cert-card" data-certificate="react">
+        <img src="dmc2.jpeg" alt="React Professional" class="cert-img">
+        <div class="cert-info">
+         <h3>First Position</h3>
+          <p>English Speech</p>
+        </div>
+      </div>
+
+         <!-- Certification 18 -->
+      <div class="cert-card" data-certificate="react">
+        <img src="dmc3.jpeg" alt="React Professional" class="cert-img">
+        <div class="cert-info">
+          <h3>Qualification</h3>
+          <p>CM English Debate (Provintial Level)</p>
+        </div>
+      </div>
+
+       <!-- Certification 19 -->
+      <div class="cert-card" data-certificate="react">
+        <img src="dmc4.jpeg" alt="React Professional" class="cert-img">
+        <div class="cert-info">
+          <h3>First Position</h3>
+          <p>CM English Debate (Division Level)</p>
+        </div>
+      </div>
+
+         <!-- Certification 20 -->
+      <div class="cert-card" data-certificate="react">
+        <img src="dmc5.jpeg" alt="React Professional" class="cert-img">
+        <div class="cert-info">
+          <h3>Third position</h3>
+          <p>CM English Debate (District Level)</p>
+        </div>
+      </div>
+
+       <!-- Certification 21 -->
+      <div class="cert-card" data-certificate="react">
+        <img src="dmc6.jpeg" alt="React Professional" class="cert-img">
+        <div class="cert-info">
+          <h3>Second Position</h3>
+          <p>CM English Debate (Tehsil Level)</p>
+        </div>
+      </div>
+
+         <!-- Certification 22 -->
+      <div class="cert-card" data-certificate="react">
+        <img src="dmc7.jpeg" alt="React Professional" class="cert-img">
+        <div class="cert-info">
+           <h3>Second Position</h3>
+          <p>CM English Debate (Markaz Level)</p>
+        </div>
+      </div>
+
+               <!-- Certification 23 -->
+      <div class="cert-card" data-certificate="react">
+        <img src="dmc8.jpeg" alt="React Professional" class="cert-img">
+        <div class="cert-info">
+          <h3>First Position</h3>
+          <p>English Speech</p>
+        </div>
+      </div>
+
+        <!-- Certification 24 -->
+      <div class="cert-card" data-certificate="react">
+        <img src="dmc9.jpeg" alt="React Professional" class="cert-img">
+        <div class="cert-info">
+          <h3>First Position</h3>
+          <p>English Speech</p>
+        </div>
+      </div>
+
+         <!-- Certification 25 -->
+      <div class="cert-card" data-certificate="react">
+        <img src="dmc10.jpeg" alt="React Professional" class="cert-img">
+        <div class="cert-info">
+          <h3>First Position</h3>
+          <p>English Speech</p>
+        </div>
+      </div>
+
+
+        <!-- Certification 26 -->
+      <div class="cert-card" data-certificate="react">
+        <img src="dmc11.jpeg" alt="React Professional" class="cert-img">
+        <div class="cert-info">
+          <h3>Second Position</h3>
+          <p>English Speech</p>
+        </div>
+      </div>
+
+         <!-- Certification 27 -->
+      <div class="cert-card" data-certificate="react">
+        <img src="dmc12.jpeg" alt="React Professional" class="cert-img">
+        <div class="cert-info">
+          <h3>Second Position</h3>
+          <p>English Speech</p>
+        </div>
+      </div>
+
+       <!-- Certification 28 -->
+      <div class="cert-card" data-certificate="react">
+        <img src="dmc13.jpeg" alt="React Professional" class="cert-img">
+        <div class="cert-info">
+          <h3>First Position</h3>
+          <p>English Speech</p>
+        </div>
+      </div>
+
+         <!-- Certification 29 -->
+      <div class="cert-card" data-certificate="react">
+        <img src="dmc14.jpeg" alt="React Professional" class="cert-img">
+        <div class="cert-info">
+          <h3>Participated</h3>
+          <p>Football Tournament</p>
+        </div>
+      </div>
+
+       <!-- Certification 30 -->
+      <div class="cert-card" data-certificate="react">
+        <img src="dmc15.jpeg" alt="React Professional" class="cert-img">
+        <div class="cert-info">
+          <h3>Participated</h3>
+          <p>Science Fair</p>
+        </div>
+      </div>
+
+         <!-- Certification 31 -->
+      <div class="cert-card" data-certificate="react">
+        <img src="dmc16.jpeg" alt="React Professional" class="cert-img">
+        <div class="cert-info">
+          <h3>First Position</h3>
+          <p>Urdu Debate</p>
+        </div>
+      </div>
+
+       <!-- Certification 32 -->
+      <div class="cert-card" data-certificate="react">
+        <img src="dmc17.jpeg" alt="React Professional" class="cert-img">
+        <div class="cert-info">
+           <h3>First Position</h3>
+          <p>Urdu Debate</p>
+        </div>
+      </div>
+
+       <!-- Certification 33 -->
+      <div class="cert-card" data-certificate="react">
+        <img src="dmc18.jpeg" alt="React Professional" class="cert-img">
+        <div class="cert-info">
+          <h3>Second Position</h3>
+          <p>Urdu Debate</p>
+        </div>
+      </div>
+
+         <!-- Certification 34 -->
+      <div class="cert-card" data-certificate="react">
+        <img src="dmc19.jpeg" alt="React Professional" class="cert-img">
+        <div class="cert-info">
+          <h3>First Position</h3>
+          <p>Naat Competition</p>
+        </div>
+      </div>
+
+      
+
+         <!-- Certification 35 -->
+      <div class="cert-card" data-certificate="react">
+        <img src="dmc20.jpeg" alt="React Professional" class="cert-img">
+        <div class="cert-info">
+          <h3>Participated</h3>
+          <p>English Speech</p>
+        </div>
+      </div>
+
+
+               <!-- Certification 36 -->
+      <div class="cert-card" data-certificate="react">
+        <img src="dmc21.jpeg" alt="React Professional" class="cert-img">
+        <div class="cert-info">
+          <h3>First Position</h3>
+          <p>Urdu Speech</p>
+        </div>
+      </div>
+
+        <!-- Certification 37 -->
+      <div class="cert-card" data-certificate="react">
+        <img src="dmc22.jpeg" alt="React Professional" class="cert-img">
+        <div class="cert-info">
+           <h3>First Position</h3>
+          <p>Urdu Speech(KIPs College)</p>
+        </div>
+      </div>
+
+         <!-- Certification 38 -->
+      <div class="cert-card" data-certificate="react">
+        <img src="dmc23.jpeg" alt="React Professional" class="cert-img">
+        <div class="cert-info">
+          <h3>A+ Grades</h3>
+          <p>Annual Examination</p>
+        </div>
+      </div>
+
+
+        <!-- Certification 39 -->
+      <div class="cert-card" data-certificate="react">
+        <img src="dmc24.jpeg" alt="React Professional" class="cert-img">
+        <div class="cert-info">
+           <h3>A+ Grades</h3>
+          <p>Annual Examination</p>
+        </div>
+      </div>
+
+         <!-- Certification 40 -->
+      <div class="cert-card" data-certificate="react">
+        <img src="dmc25.jpeg" alt="React Professional" class="cert-img">
+        <div class="cert-info">
+          <h3>Participated</h3>
+          <p>Spelling Bee</p>
+        </div>
+      </div>
+
+       <!-- Certification 41 -->
+      <div class="cert-card" data-certificate="react">
+        <img src="dmc26.jpeg" alt="React Professional" class="cert-img">
+        <div class="cert-info">
+          <h3>First position</h3>
+          <p>Naat Competition</p>
+        </div>
+      </div>
+
+         <!-- Certification 42 -->
+      <div class="cert-card" data-certificate="react">
+        <img src="dmc27.jpeg" alt="React Professional" class="cert-img">
+        <div class="cert-info">
+          <h3>First position</h3>
+          <p>Tug of War</p>
+        </div>
+      </div>
+
+       <!-- Certification 43 -->
+      <div class="cert-card" data-certificate="react">
+        <img src="dmc28.jpeg" alt="React Professional" class="cert-img">
+        <div class="cert-info">
+           <h3>A+ Grades</h3>
+          <p>Annual Examination</p>
+        </div>
+      </div>
+
+         <!-- Certification 44 -->
+      <div class="cert-card" data-certificate="react">
+        <img src="dmc29.jpeg" alt="React Professional" class="cert-img">
+        <div class="cert-info">
+          <h3>First Position</h3>
+          <p>Naat Competition</p>
+        </div>
+      </div>
+
+       <!-- Certification 45 -->
+      <div class="cert-card" data-certificate="react">
+        <img src="dmc30.jpeg" alt="React Professional" class="cert-img">
+        <div class="cert-info">
+          <h3>Highest Percentage</h3>
+          <p>In Computer Science</p>
+        </div>
+      </div>
+
+         <!-- Certification 46 -->
+      <div class="cert-card" data-certificate="react">
+        <img src="dmc31.jpeg" alt="React Professional" class="cert-img">
+        <div class="cert-info">
+          <h3>A+ Grades</h3>
+          <p>Annual Examination</p>
+        </div>
+      </div>
+
+       <!-- Certification 47 -->
+      <div class="cert-card" data-certificate="react">
+        <img src="kangroo.jpeg" alt="React Professional" class="cert-img">
+        <div class="cert-info">
+          <h3>Participated</h3>
+          <p>In International Kangroo Mathematics Contest/p>
+        </div>
+      </div>
+
+         <!-- Certification 48 -->
+      <div class="cert-card" data-certificate="react">
+        <img src="dawnspell.jpeg" alt="React Professional" class="cert-img">
+        <div class="cert-info">
+          <h3>Participated</h3>
+          <p>DAWN Spelling Bee Contest</p>
+        </div>
+      </div>
+
+
+               <!-- Certification 49 -->
+      <div class="cert-card" data-certificate="react">
+        <img src="dmcpros.jpeg" alt="React Professional" class="cert-img">
+        <div class="cert-info">
+          <h3>Prospectus</h3>
+          <p>My Achievements at Divisional Model College were mentioned in Prospectus</p>
+        </div>
+      </div>
+
+        <!-- Certification 50 -->
+      <div class="cert-card" data-certificate="react">
+        <img src="bisepros.jpeg" alt="React Professional" class="cert-img">
+        <div class="cert-info">
+          <h3>Prospectus</h3>
+                <p>My Achievements at Faisalabad Board were mentioned in Prospectus</p>
+        </div>
+      </div>
+
+      <!-- Add your remaining certificates following the same pattern -->
+      
+    </div>
+    
+    <div class="text-center">
+      <a href="index.html" class="back-btn">
+        <i class="fas fa-arrow-left mr-2"></i> Back to Portfolio
+      </a>
+      <br><br><br>
+    </div>
+  </div>
+
+  <!-- Certificate Modal -->
+  <div class="cert-modal" id="certModal">
+    <div class="modal-content">
+      <button class="close-modal" id="closeModal">
+        <i class="fas fa-times"></i>
+      </button>
+      <img id="modalCertImage" class="modal-cert-img" src="" alt="Certificate">
+      <div class="modal-info">
+        <h3 id="modalCertTitle" class="text-xl font-bold mb-2 text-slate-800 dark:text-white"></h3>
+        <p id="modalCertIssuer" class="text-slate-600 dark:text-slate-400 mb-1"></p>
+        <p id="modalCertDate" class="text-blue-500 dark:text-blue-400 text-sm"></p>
+      </div>
+    </div>
+  </div>
+
+ <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <a href="#home">
+                        <span>Syed Samiq</span> Abbas Bukhari
+                    </a>
+                </div>
+                
+                <div class="footer-links">
+                    <a href="index.html#home">Home</a>
+                    <a href="certifications.html">Achievements</a>
+                    <a href="index.html#about">About University</a>
+                    <a href="index.html#projects">Subjects</a>
+                    <a href="index.html#experience">Journey</a>
+                    <a href="index.html#contact">Contact</a>
+                </div>
+                
+                <div class="footer-copyright">
+                    &copy; 2025. All rights reserved.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+  <script>
+    // Theme toggle
+    const themeToggle = document.getElementById('theme-toggle');
+    
+    if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    
+    themeToggle.addEventListener('click', () => {
+      document.documentElement.classList.toggle('dark');
+      localStorage.setItem('color-theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+    });
+
+    // Certificate animation on scroll
+    const certCards = document.querySelectorAll('.cert-card');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = "1";
+          entry.target.style.transform = "translateY(0)";
+        }
+      });
+    }, { threshold: 0.1 });
+
+    certCards.forEach(card => {
+      card.style.opacity = "0";
+      card.style.transform = "translateY(20px)";
+      card.style.transition = "all 0.6s ease";
+      observer.observe(card);
+    });
+
+    // Certificate modal functionality
+    const certModal = document.getElementById('certModal');
+    const closeModal = document.getElementById('closeModal');
+    const modalCertImage = document.getElementById('modalCertImage');
+    const modalCertTitle = document.getElementById('modalCertTitle');
+    const modalCertIssuer = document.getElementById('modalCertIssuer');
+    const modalCertDate = document.getElementById('modalCertDate');
+
+    document.querySelectorAll('.cert-card').forEach(card => {
+      card.addEventListener('click', function() {
+        const imgSrc = this.querySelector('img').src;
+        const title = this.querySelector('h3').textContent;
+        const issuer = this.querySelector('p').textContent;
+       
+        
+        // Use higher resolution image if available (replace placeholder logic with your actual images)
+        modalCertImage.src = imgSrc.replace('600x400', '1200x800');
+        modalCertTitle.textContent = title;
+        modalCertIssuer.textContent = issuer;
+    
+        
+        certModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      });
+    });
+
+    closeModal.addEventListener('click', function() {
+      certModal.classList.remove('active');
+      document.body.style.overflow = 'auto';
+    });
+
+    // Close modal when clicking outside the content
+    certModal.addEventListener('click', function(e) {
+      if (e.target === certModal) {
+        certModal.classList.remove('active');
+        document.body.style.overflow = 'auto';
+      }
+    });
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        certModal.classList.remove('active');
+        document.body.style.overflow = 'auto';
+      }
+    });
+    
+  </script>
+</body>
+</html>

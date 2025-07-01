@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="game.ico">
+    <title>2048 Puzzle Game</title>
+    <style>
+        /* Navigation Bar Styles */
+        nav.fixed {
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            z-index: 50;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        .dark nav.fixed {
+            background-color: rgba(15, 23, 42, 0.8);
+        }
+
+        .nav-container {
+            max-width: 1280px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
+
+        .nav-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo a {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e293b;
+            text-decoration: none;
+        }
+
+        .dark .nav-logo a {
+            color: white;
+        }
+
+        .nav-logo span {
+            color: #3b82f6;
+        }
+
+        .nav-items {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        #theme-toggle {
+            padding: 0.5rem;
+            border-radius: 9999px;
+            background-color: transparent;
+            cursor: pointer;
+            border: none;
+        }
+
+        #theme-toggle:hover {
+            background-color: #e2e8f0;
+        }
+
+        .dark #theme-toggle:hover {
+            background-color: #334155;
+        }
+
+        .nav-link {
+            padding-left: 1rem;
+            padding-right: 1rem;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+            color: #334155;
+            text-decoration: none;
+        }
+
+        .dark .nav-link {
+            color: #cbd5e1;
+        }
+
+        .nav-link:hover {
+            color: #3b82f6;
+        }
+
+        .dark .nav-link:hover {
+            color: #60a5fa;
+        }
+
+        /* Icon styles */
+        .fa-moon, .fa-sun {
+            font-size: 1rem;
+        }
+
+        .dark .fa-sun {
+            color: #facc15;
+        }
+
+        .dark .fa-moon {
+            display: none;
+        }
+
+        .fa-sun {
+            display: none;
+        }
+
+        .dark .fa-sun {
+            display: block;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background: #f5f5f5;
+            color: #333;
+        }
+        
+        .dark body {
+            background: #0f172a;
+            color: #cbd5e1;
+        }
+
+        .game-container {
+            text-align: center;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+        }
+        
+        .dark .game-container {
+            background: #1e293b;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .dark h1 {
+            color: #e2e8f0;
+        }
+
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .score-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        .score-box {
+            background: #bbada0;
+            padding: 10px 15px;
+            border-radius: 5px;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .dark .score-box {
+            background: #334155;
+        }
+
+        .score-title {
+            font-size: 0.8em;
+            color: #eee4da;
+        }
+        
+        .dark .score-title {
+            color: #cbd5e1;
+        }
+
+        .score-value {
+            font-size: 1.2em;
+        }
+
+        .game-intro {
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+        
+        .dark .game-intro {
+            color: #cbd5e1;
+        }
+
+        .grid-container {
+            background: #bbada0;
+            border-radius: 6px;
+            padding: 10px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .dark .grid-container {
+            background: #334155;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-gap: 10px;
+            width: 100%;
+            max-width: 450px;
+            margin: 0 auto;
+        }
+
+        .cell {
+            background: rgba(238, 228, 218, 0.35);
+            border-radius: 3px;
+            height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2em;
+            font-weight: bold;
+            color: #776e65;
+        }
+        
+        .dark .cell {
+            background: rgba(203, 213, 225, 0.2);
+            color: #e2e8f0;
+        }
+
+        .tile {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 3px;
+            background: #eee4da;
+            animation: appear 0.2s;
+        }
+        
+        .dark .tile {
+            background: #334155;
+        }
+
+        @keyframes appear {
+            0% {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .tile-2 { background: #eee4da; color: #776e65; }
+        .tile-4 { background: #ede0c8; color: #776e65; }
+        .tile-8 { background: #f2b179; color: white; }
+        .tile-16 { background: #f59563; color: white; }
+        .tile-32 { background: #f67c5f; color: white; }
+        .tile-64 { background: #f65e3b; color: white; }
+        .tile-128 { background: #edcf72; color: white; font-size: 1.8em; }
+        .tile-256 { background: #edcc61; color: white; font-size: 1.8em; }
+        .tile-512 { background: #edc850; color: white; font-size: 1.8em; }
+        .tile-1024 { background: #edc53f; color: white; font-size: 1.5em; }
+        .tile-2048 { background: #edc22e; color: white; font-size: 1.5em; }
+
+        .game-over {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(238, 228, 218, 0.73);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            z-index: 100;
+            display: none;
+        }
+        
+        .dark .game-over {
+            background: rgba(30, 41, 59, 0.9);
+        }
+
+        .game-over-text {
+            font-size: 3em;
+            font-weight: bold;
+            color: #776e65;
+            margin-bottom: 20px;
+        }
+        
+        .dark .game-over-text {
+            color: #e2e8f0;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+        }
+
+        .reset-btn {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .dark .reset-btn {
+            background: #2563eb;
+        }
+
+        .how-to-play {
+            margin-top: 20px;
+            text-align: left;
+            font-size: 0.9em;
+            color: #776e65;
+        }
+        
+        .dark .how-to-play {
+            color: #cbd5e1;
+        }
+
+        .how-to-play h3 {
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        .dark .how-to-play h3 {
+            color: #e2e8f0;
+        }
+
+        .how-to-play ul {
+            padding-left: 20px;
+            margin: 0;
+        }
+
+        @media (max-width: 500px) {
+            .cell {
+                height: 80px;
+                font-size: 1.5em;
+            }
+            
+            .tile-128, .tile-256, .tile-512 {
+                font-size: 1.5em;
+            }
+            
+            .tile-1024, .tile-2048 {
+                font-size: 1.2em;
+            }
+        }
+
+        /* Footer styles */
+        footer {
+            width: 100%;
+            padding: 2rem 0;
+            background-color: #0f172a;
+            color: white;
+            overflow-x: hidden;
+        }
+        
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        @media (min-width: 768px) {
+            .footer-content {
+                flex-direction: row;
+                justify-content: space-between;
+            }
+        }
+        
+        .footer-logo {
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        @media (min-width: 768px) {
+            .footer-logo {
+                margin-bottom: 0;
+                text-align: left;
+            }
+        }
+        
+        .footer-logo a {
+            font-size: 1.25rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        
+        .footer-logo span {
+            color: #60a5fa;
+        }
+        
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        
+        @media (min-width: 768px) {
+            .footer-links {
+                margin-bottom: 0;
+                gap: 1.5rem;
+            }
+        }
+        
+        .footer-links a {
+            font-size: 0.875rem;
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        @media (min-width: 768px) {
+            .footer-links a {
+                font-size: 1rem;
+            }
+        }
+        
+        .footer-links a:hover {
+            color: #60a5fa;
+        }
+        
+        .footer-copyright {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            text-align: center;
+        }
+        
+        @media (min-width: 768px) {
+            .footer-copyright {
+                font-size: 0.875rem;
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="fixed">
+        <div class="nav-container">
+            <div class="nav-flex">
+                <div class="nav-logo">
+                    <a href="index.html">
+                        <span>Syed Samiq</span> Abbas Bukhari
+                    </a>
+                </div>
+                <div class="nav-items">
+                    <button id="theme-toggle">
+                        <i class="fas fa-moon"></i>
+                        <i class="fas fa-sun"></i>
+                    </button>
+                    <a href="index.html" class="nav-link">Home</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="game-container">
+        <h1>2048 Puzzle Game</h1>
+        
+        <div class="game-header">
+            <div class="game-intro">
+                Join the tiles, get to <strong>2048!</strong>
+            </div>
+            
+            <div class="score-container">
+                <div class="score-box">
+                    <div class="score-title">SCORE</div>
+                    <div class="score-value" id="score">0</div>
+                </div>
+                <div class="score-box">
+                    <div class="score-title">BEST</div>
+                    <div class="score-value" id="best-score">0</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button class="reset-btn" id="reset-btn">New Game</button>
+        </div>
+        
+        <div class="grid-container">
+            <div class="grid" id="grid">
+                <!-- Cells will be generated by JavaScript -->
+            </div>
+            
+            <div class="game-over" id="game-over">
+                <div class="game-over-text" id="game-over-text">Game Over!</div>
+                <button class="reset-btn" id="try-again-btn">Try Again</button>
+            </div>
+        </div>
+        
+        <div class="how-to-play">
+            <h3>How to play:</h3>
+            <ul>
+                <li>Use <strong>arrow keys</strong> or <strong>swipe</strong> to move tiles</li>
+                <li>When two tiles with the same number touch, they <strong>merge into one!</strong></li>
+                <li>Get a <strong>2048 tile</strong> to win</li>
+            </ul>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <a href="#home">
+                        <span>Syed Samiq</span> Abbas Bukhari
+                    </a>
+                </div>
+                
+                <div class="footer-links">
+                    <a href="index.html#home">Home</a>
+                    <a href="certifications.html">Achievements</a>
+                    <a href="index.html#about">About University</a>
+                    <a href="index.html#projects">Subjects</a>
+                    <a href="index.html#experience">Journey</a>
+                    <a href="index.html#contact">Contact</a>
+                </div>
+                
+                <div class="footer-copyright">
+                    &copy; 2025. All rights reserved.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Game elements
+            const grid = document.getElementById('grid');
+            const scoreDisplay = document.getElementById('score');
+            const bestScoreDisplay = document.getElementById('best-score');
+            const resetBtn = document.getElementById('reset-btn');
+            const tryAgainBtn = document.getElementById('try-again-btn');
+            const gameOverScreen = document.getElementById('game-over');
+            const gameOverText = document.getElementById('game-over-text');
+            
+            // Game variables
+            let board = [];
+            let score = 0;
+            let bestScore = localStorage.getItem('bestScore') || 0;
+            let gameOver = false;
+            let hasWon = false;
+            let touchStartX = 0;
+            let touchStartY = 0;
+            
+            // Initialize the game
+            function initGame() {
+                // Create empty board
+                board = [
+                    [0, 0, 0, 0],
+                    [0, 0, 0, 0],
+                    [0, 0, 0, 0],
+                    [0, 0, 0, 0]
+                ];
+                
+                // Reset game state
+                score = 0;
+                gameOver = false;
+                hasWon = false;
+                
+                // Update displays
+                scoreDisplay.textContent = score;
+                bestScoreDisplay.textContent = bestScore;
+                gameOverScreen.style.display = 'none';
+                
+                // Create grid cells if not already created
+                if (grid.children.length === 0) {
+                    for (let i = 0; i < 16; i++) {
+                        const cell = document.createElement('div');
+                        cell.className = 'cell';
+                        cell.id = `cell-${Math.floor(i / 4)}-${i % 4}`;
+                        grid.appendChild(cell);
+                    }
+                }
+                
+                // Add two initial tiles
+                addRandomTile();
+                addRandomTile();
+                
+                // Render the board
+                updateBoard();
+            }
+            
+            // Add a random tile (2 or 4) to an empty cell
+            function addRandomTile() {
+                const emptyCells = [];
+                
+                // Find all empty cells
+                for (let row = 0; row < 4; row++) {
+                    for (let col = 0; col < 4; col++) {
+                        if (board[row][col] === 0) {
+                            emptyCells.push({ row, col });
+                        }
+                    }
+                }
+                
+                // If there are empty cells, add a new tile
+                if (emptyCells.length > 0) {
+                    const { row, col } = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+                    board[row][col] = Math.random() < 0.9 ? 2 : 4;
+                }
+            }
+            
+            // Update the visual board
+            function updateBoard() {
+                for (let row = 0; row < 4; row++) {
+                    for (let col = 0; col < 4; col++) {
+                        const cell = document.getElementById(`cell-${row}-${col}`);
+                        const value = board[row][col];
+                        
+                        // Clear the cell
+                        cell.innerHTML = '';
+                        
+                        // If there's a value, add a tile
+                        if (value > 0) {
+                            const tile = document.createElement('div');
+                            tile.className = `tile tile-${value}`;
+                            tile.textContent = value;
+                            cell.appendChild(tile);
+                        }
+                    }
+                }
+            }
+            
+            // Move tiles in a direction
+            function move(direction) {
+                if (gameOver) return;
+                
+                // Create a copy of the board to compare later
+                const oldBoard = JSON.stringify(board);
+                let moved = false;
+                
+                // Process the move based on direction
+                switch (direction) {
+                    case 'up':
+                        moved = moveUp();
+                        break;
+                    case 'down':
+                        moved = moveDown();
+                        break;
+                    case 'left':
+                        moved = moveLeft();
+                        break;
+                    case 'right':
+                        moved = moveRight();
+                        break;
+                }
+                
+                // If the board changed, add a new tile and update
+                if (moved) {
+                    addRandomTile();
+                    updateBoard();
+                    checkGameOver();
+                    
+                    // Update best score if needed
+                    if (score > bestScore) {
+                        bestScore = score;
+                        bestScoreDisplay.textContent = bestScore;
+                        localStorage.setItem('bestScore', bestScore);
+                    }
+                }
+            }
+            
+            // Move tiles up
+            function moveUp() {
+                let moved = false;
+                
+                for (let col = 0; col < 4; col++) {
+                    // Compact tiles (remove zeros)
+                    let compacted = [];
+                    for (let row = 0; row < 4; row++) {
+                        if (board[row][col] !== 0) {
+                            compacted.push(board[row][col]);
+                        }
+                    }
+                    
+                    // Merge tiles
+                    let merged = [];
+                    for (let i = 0; i < compacted.length; i++) {
+                        if (i < compacted.length - 1 && compacted[i] === compacted[i + 1]) {
+                            const newValue = compacted[i] * 2;
+                            merged.push(newValue);
+                            score += newValue;
+                            i++; // Skip next tile as it's merged
+                            moved = true;
+                        } else {
+                            merged.push(compacted[i]);
+                        }
+                    }
+                    
+                    // Fill with zeros
+                    while (merged.length < 4) {
+                        merged.push(0);
+                    }
+                    
+                    // Check if anything changed
+                    for (let row = 0; row < 4; row++) {
+                        if (board[row][col] !== merged[row]) {
+                            moved = true;
+                        }
+                        board[row][col] = merged[row];
+                    }
+                }
+                
+                scoreDisplay.textContent = score;
+                return moved;
+            }
+            
+            // Move tiles down
+            function moveDown() {
+                let moved = false;
+                
+                for (let col = 0; col < 4; col++) {
+                    // Compact tiles (remove zeros)
+                    let compacted = [];
+                    for (let row = 3; row >= 0; row--) {
+                        if (board[row][col] !== 0) {
+                            compacted.push(board[row][col]);
+                        }
+                    }
+                    
+                    // Merge tiles
+                    let merged = [];
+                    for (let i = 0; i < compacted.length; i++) {
+                        if (i < compacted.length - 1 && compacted[i] === compacted[i + 1]) {
+                            const newValue = compacted[i] * 2;
+                            merged.push(newValue);
+                            score += newValue;
+                            i++; // Skip next tile as it's merged
+                            moved = true;
+                        } else {
+                            merged.push(compacted[i]);
+                        }
+                    }
+                    
+                    // Fill with zeros
+                    while (merged.length < 4) {
+                        merged.push(0);
+                    }
+                    
+                    // Check if anything changed
+                    for (let row = 0; row < 4; row++) {
+                        const newRow = 3 - row;
+                        if (board[newRow][col] !== merged[row]) {
+                            moved = true;
+                        }
+                        board[newRow][col] = merged[row];
+                    }
+                }
+                
+                scoreDisplay.textContent = score;
+                return moved;
+            }
+            
+            // Move tiles left
+            function moveLeft() {
+                let moved = false;
+                
+                for (let row = 0; row < 4; row++) {
+                    // Compact tiles (remove zeros)
+                    let compacted = [];
+                    for (let col = 0; col < 4; col++) {
+                        if (board[row][col] !== 0) {
+                            compacted.push(board[row][col]);
+                        }
+                    }
+                    
+                    // Merge tiles
+                    let merged = [];
+                    for (let i = 0; i < compacted.length; i++) {
+                        if (i < compacted.length - 1 && compacted[i] === compacted[i + 1]) {
+                            const newValue = compacted[i] * 2;
+                            merged.push(newValue);
+                            score += newValue;
+                            i++; // Skip next tile as it's merged
+                            moved = true;
+                        } else {
+                            merged.push(compacted[i]);
+                        }
+                    }
+                    
+                    // Fill with zeros
+                    while (merged.length < 4) {
+                        merged.push(0);
+                    }
+                    
+                    // Check if anything changed
+                    for (let col = 0; col < 4; col++) {
+                        if (board[row][col] !== merged[col]) {
+                            moved = true;
+                        }
+                        board[row][col] = merged[col];
+                    }
+                }
+                
+                scoreDisplay.textContent = score;
+                return moved;
+            }
+            
+            // Move tiles right
+            function moveRight() {
+                let moved = false;
+                
+                for (let row = 0; row < 4; row++) {
+                    // Compact tiles (remove zeros)
+                    let compacted = [];
+                    for (let col = 3; col >= 0; col--) {
+                        if (board[row][col] !== 0) {
+                            compacted.push(board[row][col]);
+                        }
+                    }
+                    
+                    // Merge tiles
+                    let merged = [];
+                    for (let i = 0; i < compacted.length; i++) {
+                        if (i < compacted.length - 1 && compacted[i] === compacted[i + 1]) {
+                            const newValue = compacted[i] * 2;
+                            merged.push(newValue);
+                            score += newValue;
+                            i++; // Skip next tile as it's merged
+                            moved = true;
+                        } else {
+                            merged.push(compacted[i]);
+                        }
+                    }
+                    
+                    // Fill with zeros
+                    while (merged.length < 4) {
+                        merged.push(0);
+                    }
+                    
+                    // Check if anything changed
+                    for (let col = 0; col < 4; col++) {
+                        const newCol = 3 - col;
+                        if (board[row][newCol] !== merged[col]) {
+                            moved = true;
+                        }
+                        board[row][newCol] = merged[col];
+                    }
+                }
+                
+                scoreDisplay.textContent = score;
+                return moved;
+            }
+            
+            // Check if game is over
+            function checkGameOver() {
+                // Check for win (2048 tile)
+                if (!hasWon) {
+                    for (let row = 0; row < 4; row++) {
+                        for (let col = 0; col < 4; col++) {
+                            if (board[row][col] === 2048) {
+                                hasWon = true;
+                                gameOverText.textContent = 'You Win!';
+                                gameOverScreen.style.display = 'flex';
+                                return;
+                            }
+                        }
+                    }
+                }
+                
+                // Check for empty cells
+                for (let row = 0; row < 4; row++) {
+                    for (let col = 0; col < 4; col++) {
+                        if (board[row][col] === 0) {
+                            return; // Game not over
+                        }
+                    }
+                }
+                
+                // Check for possible merges
+                for (let row = 0; row < 4; row++) {
+                    for (let col = 0; col < 4; col++) {
+                        const value = board[row][col];
+                        
+                        // Check right neighbor
+                        if (col < 3 && board[row][col + 1] === value) {
+                            return; // Game not over
+                        }
+                        
+                        // Check bottom neighbor
+                        if (row < 3 && board[row + 1][col] === value) {
+                            return; // Game not over
+                        }
+                    }
+                }
+                
+                // If we get here, game is over
+                gameOver = true;
+                gameOverText.textContent = 'Game Over!';
+                gameOverScreen.style.display = 'flex';
+            }
+            
+            // Event listeners
+            resetBtn.addEventListener('click', initGame);
+            tryAgainBtn.addEventListener('click', initGame);
+            
+            // Keyboard controls
+            document.addEventListener('keydown', (e) => {
+                switch (e.key) {
+                    case 'ArrowUp':
+                        move('up');
+                        break;
+                    case 'ArrowDown':
+                        move('down');
+                        break;
+                    case 'ArrowLeft':
+                        move('left');
+                        break;
+                    case 'ArrowRight':
+                        move('right');
+                        break;
+                }
+            });
+            
+            // Touch controls for mobile
+            document.addEventListener('touchstart', (e) => {
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+            }, false);
+            
+            document.addEventListener('touchend', (e) => {
+                if (!touchStartX || !touchStartY) return;
+                
+                const touchEndX = e.changedTouches[0].clientX;
+                const touchEndY = e.changedTouches[0].clientY;
+                
+                const diffX = touchStartX - touchEndX;
+                const diffY = touchStartY - touchEndY;
+                
+                // Determine the direction
+                if (Math.abs(diffX) > Math.abs(diffY)) {
+                    // Horizontal swipe
+                    if (diffX > 0) {
+                        move('left');
+                    } else {
+                        move('right');
+                    }
+                } else {
+                    // Vertical swipe
+                    if (diffY > 0) {
+                        move('up');
+                    } else {
+                        move('down');
+                    }
+                }
+                
+                // Reset touch coordinates
+                touchStartX = 0;
+                touchStartY = 0;
+            }, false);
+            
+            // Initialize the game
+            initGame();
+        });
+    </script>
+</body>
+</html>

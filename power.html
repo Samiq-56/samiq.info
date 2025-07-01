@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mobile Battle Royale</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: #000;
+            touch-action: none;
+        }
+        
+        #game-container {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+        }
+        
+        /* Mobile Controls */
+        #controls {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: 100;
+            pointer-events: none;
+        }
+        
+        .joystick {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            pointer-events: auto;
+            touch-action: none;
+        }
+        
+        #move-joystick {
+            left: 30px;
+            bottom: 30px;
+        }
+        
+        #look-joystick {
+            right: 30px;
+            bottom: 30px;
+        }
+        
+        #action-buttons {
+            position: absolute;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .action-btn {
+            width: 80px;
+            height: 80px;
+            background: rgba(255,0,0,0.5);
+            border-radius: 50%;
+            margin: 15px 0;
+            pointer-events: auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-family: Arial;
+            font-weight: bold;
+        }
+        
+        /* UI Elements */
+        #ui {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: 50;
+            pointer-events: none;
+        }
+        
+        #health-bar {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 200px;
+            height: 30px;
+            background: rgba(0,0,0,0.5);
+            border: 2px solid #fff;
+        }
+        
+        #health-fill {
+            height: 100%;
+            width: 100%;
+            background: #ff0000;
+        }
+        
+        #ammo {
+            position: absolute;
+            top: 60px;
+            left: 20px;
+            color: white;
+            font-family: Arial;
+            font-size: 24px;
+        }
+        
+        #score {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: white;
+            font-family: Arial;
+            font-size: 24px;
+        }
+        
+        #map {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 150px;
+            height: 150px;
+            background: rgba(0,0,0,0.5);
+            border: 2px solid #fff;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container"></div>
+    
+    <div id="ui">
+        <div id="health-bar">
+            <div id="health-fill"></div>
+        </div>
+        <div id="ammo">30/120</div>
+        <div id="score">0 Kills</div>
+        <div id="map"></div>
+    </div>
+    
+    <div id="controls">
+        <div id="move-joystick" class="joystick"></div>
+        <div id="look-joystick" class="joystick"></div>
+        <div id="action-buttons">
+            <div id="shoot-btn" class="action-btn">FIRE</div>
+            <div id="jump-btn" class="action-btn">JUMP</div>
+            <div id="reload-btn" class="action-btn">RELOAD</div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cannon.js/0.6.2/cannon.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/nipplejs@0.8.5/dist/nipplejs.min.js"></script>
+    
+    <script>
+        // Game Constants
+        const WORLD_SIZE = 500;
+        const PLAYER_SPEED = 8;
+        const MOUSE_SENSITIVITY = 0.0005;
+        const GRAVITY = -20;
+        const MAX_PLAYERS = 20;
+        const MAX_ENEMIES = 30;
+        
+        // Game State
+        let health = 100;
+        let ammo = 30;
+        let maxAmmo = 120;
+        let score = 0;
+        let gameOver = false;
+        
+        // Setup Three.js
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x9999ff, 0.0005);
+        
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.y = 2;
+        
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        document.getElementById('game-container').appendChild(renderer.domElement);
+        
+        // Setup Physics
+        const world = new CANNON.World();
+        world.gravity.set(0, GRAVITY, 0);
+        world.broadphase = new CANNON.SAPBroadphase(world);
+        world.solver.iterations = 10;
+        
+        // Create Terrain
+        createTerrain();
+        
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0x404040);
+        scene.add(ambientLight);
+        
+        const sunLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        sunLight.position.set(100, 100, 50);
+        sunLight.castShadow = true;
+        sunLight.shadow.mapSize.width = 2048;
+        sunLight.shadow.mapSize.height = 2048;
+        sunLight.shadow.camera.near = 0.5;
+        sunLight.shadow.camera.far = 500;
+        sunLight.shadow.camera.left = -100;
+        sunLight.shadow.camera.right = 100;
+        sunLight.shadow.camera.top = 100;
+        sunLight.shadow.camera.bottom = -100;
+        scene.add(sunLight);
+        
+        // Player
+        const player = createPlayer();
+        
+        // Weapons
+        const weapon = createWeapon();
+        
+        // Enemies and Players
+        const enemies = [];
+        const players = [];
+        
+        spawnEnemies(10);
+        spawnPlayers(5);
+        
+        // Buildings and Cover
+        spawnBuildings();
+        
+        // Mobile Controls
+        setupMobileControls();
+        
+        // Game Loop
+        const clock = new THREE.Clock();
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            const delta = clock.getDelta();
+            
+            if (!gameOver) {
+                updatePhysics(delta);
+                updatePlayer(delta);
+                updateEnemies(delta);
+                updateWeapon(delta);
+                updateUI();
+            }
+            
+            renderer.render(scene, camera);
+        }
+        
+        animate();
+        
+        // Handle resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+        
+        // Game Functions
+        function createTerrain() {
+            // Ground
+            const groundGeometry = new THREE.PlaneGeometry(WORLD_SIZE, WORLD_SIZE, 100, 100);
+            const groundMaterial = new THREE.MeshStandardMaterial({ 
+                color: 0x3a5f0b,
+                roughness: 0.8,
+                metalness: 0.2
+            });
+            const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+            ground.rotation.x = -Math.PI / 2;
+            ground.receiveShadow = true;
+            scene.add(ground);
+            
+            const groundShape = new CANNON.Plane();
+            const groundBody = new CANNON.Body({ mass: 0 });
+            groundBody.addShape(groundShape);
+            groundBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI / 2);
+            world.addBody(groundBody);
+            
+            // Terrain variations
+            addHills();
+            addRocks();
+            addTrees();
+        }
+        
+        function createPlayer() {
+            // Player mesh
+            const geometry = new THREE.BoxGeometry(0.5, 1.8, 0.5);
+            const material = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
+            const playerMesh = new THREE.Mesh(geometry, material);
+            playerMesh.castShadow = true;
+            scene.add(playerMesh);
+            
+            // Physics body
+            const shape = new CANNON.Box(new CANNON.Vec3(0.25, 0.9, 0.25));
+            const playerBody = new CANNON.Body({ mass: 5 });
+            playerBody.addShape(shape);
+            playerBody.position.set(0, 5, 0);
+            world.addBody(playerBody);
+            
+            return { mesh: playerMesh, body: playerBody };
+        }
+        
+        function createWeapon() {
+            const weaponGroup = new THREE.Group();
+            scene.add(weaponGroup);
+            
+            // Gun model (simplified)
+            const gunGeometry = new THREE.BoxGeometry(0.5, 0.2, 0.1);
+            const gunMaterial = new THREE.MeshStandardMaterial({ color: 0x333333 });
+            const gun = new THREE.Mesh(gunGeometry, gunMaterial);
+            gun.position.set(0.3, -0.2, -0.5);
+            weaponGroup.add(gun);
+            
+            return {
+                group: weaponGroup,
+                lastShot: 0,
+                rateOfFire: 100 // ms between shots
+            };
+        }
+        
+        function spawnEnemies(count) {
+            for (let i = 0; i < count; i++) {
+                const x = (Math.random() - 0.5) * WORLD_SIZE * 0.8;
+                const z = (Math.random() - 0.5) * WORLD_SIZE * 0.8;
+                
+                const geometry = new THREE.BoxGeometry(0.5, 1.8, 0.5);
+                const material = new THREE.MeshStandardMaterial({ color: 0xff0000 });
+                const enemyMesh = new THREE.Mesh(geometry, material);
+                enemyMesh.castShadow = true;
+                enemyMesh.position.set(x, 1, z);
+                scene.add(enemyMesh);
+                
+                const shape = new CANNON.Box(new CANNON.Vec3(0.25, 0.9, 0.25));
+                const enemyBody = new CANNON.Body({ mass: 5 });
+                enemyBody.addShape(shape);
+                enemyBody.position.set(x, 1, z);
+                world.addBody(enemyBody);
+                
+                enemies.push({
+                    mesh: enemyMesh,
+                    body: enemyBody,
+                    health: 100,
+                    aiState: 'patrol',
+                    patrolTarget: new THREE.Vector3(
+                        x + (Math.random() - 0.5) * 20,
+                        0,
+                        z + (Math.random() - 0.5) * 20
+                    )
+                });
+            }
+        }
+        
+        function spawnPlayers(count) {
+            // Similar to spawnEnemies but with different color and AI
+        }
+        
+        function spawnBuildings() {
+            // Create buildings, walls, and cover
+            const buildingTypes = [
+                { size: [10, 5, 10], color: 0xaaaaaa }, // Small house
+                { size: [20, 15, 20], color: 0x888888 }, // Large building
+                { size: [5, 2, 30], color: 0x777777 }   // Wall
+            ];
+            
+            for (let i = 0; i < 15; i++) {
+                const type = buildingTypes[Math.floor(Math.random() * buildingTypes.length)];
+                const x = (Math.random() - 0.5) * WORLD_SIZE * 0.8;
+                const z = (Math.random() - 0.5) * WORLD_SIZE * 0.8;
+                
+                const geometry = new THREE.BoxGeometry(...type.size);
+                const material = new THREE.MeshStandardMaterial({ color: type.color });
+                const building = new THREE.Mesh(geometry, material);
+                building.castShadow = true;
+                building.receiveShadow = true;
+                building.position.set(x, type.size[1]/2, z);
+                scene.add(building);
+                
+                const shape = new CANNON.Box(new CANNON.Vec3(
+                    type.size[0]/2, 
+                    type.size[1]/2, 
+                    type.size[2]/2
+                ));
+                const body = new CANNON.Body({ mass: 0 });
+                body.addShape(shape);
+                body.position.set(x, type.size[1]/2, z);
+                world.addBody(body);
+            }
+        }
+        
+        function setupMobileControls() {
+            // Movement joystick
+            const moveJoystick = nipplejs.create({
+                zone: document.getElementById('move-joystick'),
+                mode: 'static',
+                position: { left: '50%', top: '50%' },
+                color: 'white',
+                size: 120
+            });
+            
+            // Look joystick
+            const lookJoystick = nipplejs.create({
+                zone: document.getElementById('look-joystick'),
+                mode: 'static',
+                position: { left: '50%', top: '50%' },
+                color: 'white',
+                size: 120
+            });
+            
+            // Button events
+            document.getElementById('shoot-btn').addEventListener('touchstart', shoot);
+            document.getElementById('jump-btn').addEventListener('touchstart', jump);
+            document.getElementById('reload-btn').addEventListener('touchstart', reload);
+            
+            // Store control states
+            const controls = {
+                move: { x: 0, y: 0 },
+                look: { x: 0, y: 0 }
+            };
+            
+            moveJoystick.on('move', (evt, data) => {
+                controls.move.x = data.vector.x;
+                controls.move.y = data.vector.y;
+            });
+            
+            moveJoystick.on('end', () => {
+                controls.move.x = 0;
+                controls.move.y = 0;
+            });
+            
+            lookJoystick.on('move', (evt, data) => {
+                controls.look.x = data.vector.x;
+                controls.look.y = data.vector.y;
+            });
+            
+            lookJoystick.on('end', () => {
+                controls.look.x = 0;
+                controls.look.y = 0;
+            });
+            
+            return controls;
+        }
+        
+        function updatePhysics(delta) {
+            world.step(1/60, delta, 3);
+        }
+        
+        function updatePlayer(delta) {
+            // Update position based on controls
+            const moveX = controls.move.x * PLAYER_SPEED;
+            const moveZ = -controls.move.y * PLAYER_SPEED;
+            
+            const angle = camera.rotation.y;
+            const x = moveX * Math.cos(angle) - moveZ * Math.sin(angle);
+            const z = moveX * Math.sin(angle) + moveZ * Math.cos(angle);
+            
+            player.body.velocity.x = x;
+            player.body.velocity.z = z;
+            
+            // Update camera
+            camera.rotation.y -= controls.look.x * MOUSE_SENSITIVITY * 1000 * delta;
+            pitch -= controls.look.y * MOUSE_SENSITIVITY * 1000 * delta;
+            pitch = Math.max(-Math.PI/2, Math.min(Math.PI/2, pitch));
+            camera.rotation.x = pitch;
+            
+            // Sync mesh with physics body
+            player.mesh.position.copy(player.body.position);
+            player.mesh.quaternion.copy(player.body.quaternion);
+            
+            // Update weapon position
+            weapon.group.position.copy(camera.position);
+            weapon.group.quaternion.copy(camera.quaternion);
+        }
+        
+        function shoot() {
+            if (ammo <= 0 || Date.now() - weapon.lastShot < weapon.rateOfFire) return;
+            
+            ammo--;
+            weapon.lastShot = Date.now();
+            
+            // Create bullet
+            const bullet = createBullet();
+            
+            // Play sound
+            playSound('shoot');
+            
+            // Check for hits
+            checkBulletHits(bullet);
+        }
+        
+        function jump() {
+            if (Math.abs(player.body.velocity.y) < 0.1) {
+                player.body.velocity.y = 10;
+            }
+        }
+        
+        function reload() {
+            if (maxAmmo <= 0) return;
+            
+            const needed = 30 - ammo;
+            const reloadAmount = Math.min(needed, maxAmmo);
+            
+            ammo += reloadAmount;
+            maxAmmo -= reloadAmount;
+            
+            playSound('reload');
+        }
+        
+        function updateUI() {
+            // Update health bar
+            document.getElementById('health-fill').style.width = `${health}%`;
+            
+            // Update ammo counter
+            document.getElementById('ammo').textContent = `${ammo}/${maxAmmo}`;
+            
+            // Update score
+            document.getElementById('score').textContent = `${score} Kills`;
+        }
+        
+        // More game functions would be needed...
+        
+        // Start the game
+        const controls = setupMobileControls();
+    </script>
+</body>
+</html>

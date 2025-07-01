@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Syed Samiq | Portfolio</title>
+      <link rel="icon" type="image/png" href="iccon.ico"> <!-- ← Logo line -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+
+   
+
+    <style type="text/css">
+        /* Custom CSS */
+        :root {
+            --primary: #3b82f6;
+            --secondary: #10b981;
+            --dark: #1e293b;
+            --light: #f8fafc;
+        }
+
+        .dark {
+            --primary: #60a5fa;
+            --secondary: #34d399;
+            --dark: #f8fafc;
+            --light: #1e293b;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .nav-link {
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -2px;
+            left: 0;
+            background-color: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .project-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .dark .project-card:hover {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .skill-badge {
+            transition: transform 0.2s ease;
+        }
+
+        .skill-badge:hover {
+            transform: scale(1.05);
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -38px;
+            top: 0;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            border: 3px solid var(--light);
+        }
+
+        .dark .timeline-item::before {
+            border-color: var(--dark);
+        }
+
+        .testimonial-slide {
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .testimonial-slide.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .testimonial-slide.next {
+            opacity: 0;
+            transform: translateX(100%);
+        }
+
+        .testimonial-slide.prev {
+            opacity: 0;
+            transform: translateX(-100%);
+        }
+
+        /* Animation classes */
+        .fade-in {
+            animation: fadeIn 1s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .slide-up {
+            animation: slideUp 0.8s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Theme transition */
+        .theme-transition * {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+        @keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+    100% { transform: translateY(0px); }
+}
+
+.floating {
+    animation: float 6s ease-in-out infinite;
+}
+.animated-gradient {
+    animation: gradientBG 15s ease infinite;
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background-size: 400% 400%;
+}
+
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+.project-card {
+    transform: perspective(1000px) rotateX(0) rotateY(0) scale(1);
+    transition: transform 0.5s ease, box-shadow 0.3s ease;
+}
+
+.project-card:hover {
+    transform: perspective(1000px) rotateX(5deg) rotateY(5deg) scale(1.03);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+.typewriter {
+    overflow: hidden;
+    border-right: 3px solid var(--primary);
+    white-space: nowrap;
+    margin: 0 auto;
+    animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
+}
+
+@keyframes typing {
+    from { width: 0 }
+    to { width: 100% }
+}
+
+@keyframes blink-caret {
+    from, to { border-color: transparent }
+    50% { border-color: var(--primary); }
+}
+.flip-card {
+  perspective: 1000px;
+}
+
+.flip-card-inner {
+  transition: transform 0.8s;
+  transform-style: preserve-3d;
+}
+
+.flip-card:hover .flip-card-inner {
+  transform: rotateY(180deg);
+}
+
+.flip-card-front, .flip-card-back {
+  backface-visibility: hidden;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.flip-card-back {
+  transform: rotateY(180deg);
+}
+@keyframes glitch {
+  0% { text-shadow: 2px 0 red; }
+  20% { text-shadow: -2px 0 blue; }
+  40% { text-shadow: 2px 0 green; }
+  60% { text-shadow: -2px 0 yellow; }
+  80% { text-shadow: 2px 0 purple; }
+  100% { text-shadow: -2px 0 cyan; }
+}
+
+.glitch-text:hover {
+  animation: glitch 0.5s linear infinite;
+}
+
+.bubble-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.bubble-btn::before {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: rgba(255,255,255,0.5);
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.5s ease;
+}
+
+.bubble-btn:hover::before {
+  transform: translate(-50%, -50%) scale(15);
+}
+
+
+.holographic {
+  position: relative;
+  overflow: hidden;
+}
+
+.holographic::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    to bottom right,
+    rgba(255,255,255,0) 45%,
+    rgba(255,255,255,0.8) 50%,
+    rgba(255,255,255,0) 55%
+  );
+  transform: rotate(30deg);
+  transition: all 0.5s ease;
+}
+
+.holographic:hover::after {
+  left: 100%;
+}
+
+@keyframes morph {
+  0% { border-radius: 60% 40% 30% 70%/60% 30% 70% 40%; }
+  50% { border-radius: 30% 60% 70% 40%/50% 60% 30% 60%; }
+  100% { border-radius: 60% 40% 30% 70%/60% 30% 70% 40%; }
+}
+
+.morph-bg {
+  animation: morph 8s ease-in-out infinite;
+  background: linear-gradient(45deg, var(--primary) 0%, var(--secondary) 100%);
+}
+
+.particle {
+  position: fixed;
+  width: 10px;
+  height: 10px;
+  background: var(--primary);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: explode 1s ease-out forwards;
+  transform: translate(-50%, -50%);
+}
+
+@keyframes explode {
+  0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+  100% { transform: translate(var(--random-x), var(--random-y)) scale(1); opacity: 0; }
+}
+@keyframes floatPulse {
+    0% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-10px) scale(1.05); }
+    100% { transform: translateY(0) scale(1); }
+}
+
+/* Add this class to your WhatsApp button */
+.whatsapp-float {
+    animation: floatPulse 2s ease-in-out infinite;
+}
+    </style>
+</head>
+<body class="theme-transition">
+    <!-- Navigation -->
+    <nav class="fixed w-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-md z-50 shadow-sm">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <a href="#home" class="text-2xl font-bold text-slate-800 dark:text-white">
+                    <span class="text-blue-500">Syed Samiq </span>Abbas Bukhari 
+                </a>
+                
+                <div class="hidden md:flex space-x-8">
+                    <a href="#home" class="nav-link text-slate-700 dark:text-slate-300 hover:text-blue-500 dark:hover:text-blue-400">Home</a>
+                    <a href="certifications.html" class="nav-link">Achievements</a>
+                    <a href="#about" class="nav-link text-slate-700 dark:text-slate-300 hover:text-blue-500 dark:hover:text-blue-400">About University</a>
+                    <a href="#projects" class="nav-link text-slate-700 dark:text-slate-300 hover:text-blue-500 dark:hover:text-blue-400">Studied Subjects</a>
+                    <a href="#experience" class="nav-link text-slate-700 dark:text-slate-300 hover:text-blue-500 dark:hover:text-blue-400">Journey</a>
+                    <a href="#contact" class="nav-link text-slate-700 dark:text-slate-300 hover:text-blue-500 dark:hover:text-blue-400">Contact</a>
+          
+                    
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <button id="theme-toggle" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700">
+                        <i class="fas fa-moon dark:hidden"></i>
+                        <i class="fas fa-sun hidden dark:block text-yellow-300"></i>
+                    </button>
+                    
+                    <button id="mobile-menu-button" class="md:hidden p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700">
+                        <i class="fas fa-bars text-slate-700 dark:text-slate-300"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="md:hidden hidden mt-4 pb-2">
+                <div class="flex flex-col space-y-3">
+                    <a href="#home" class="nav-link text-slate-700 dark:text-slate-300 hover:text-blue-500 dark:hover:text-blue-400">Home</a>
+                    <a href="certifications.html" class="nav-link">Achievements</a>
+                    <a href="#about" class="nav-link text-slate-700 dark:text-slate-300 hover:text-blue-500 dark:hover:text-blue-400">About</a>
+                    <a href="#projects" class="nav-link text-slate-700 dark:text-slate-300 hover:text-blue-500 dark:hover:text-blue-400">Projects</a>
+                    <a href="#experience" class="nav-link text-slate-700 dark:text-slate-300 hover:text-blue-500 dark:hover:text-blue-400">My Journey</a>
+                    <a href="#contact" class="nav-link text-slate-700 dark:text-slate-300 hover:text-blue-500 dark:hover:text-blue-400">Contact</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+     <div class="absolute inset-0 -z-10 overflow-hidden">
+    <div class="absolute inset-0 animated-gradient opacity-10 dark:opacity-5"></div>
+</div>
+    <section id="home" class="min-h-screen flex items-center pt-20">
+        <div class="container mx-auto px-6 py-16 md:py-24">
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="md:w-1/2 mb-12 md:mb-0 slide-up">
+                  <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-slate-800 dark:text-white typewriter">
+    Hi, I'm <span class="text-blue-500">Samiq Abbas!</span>
+</h1>
+                    <h2 class="text-2xl md:text-3xl mb-6 text-slate-600 dark:text-slate-300">
+                        Data Science Student
+                    </h2>
+                    <p class="text-lg mb-8 text-slate-600 dark:text-slate-400 max-w-lg">
+                        <p>
+  Hello! I'm 
+  <span style="color:rgb(59 130 246 / var(--tw-text-opacity, 1)); font-weight:600;">Syed Samiq Abbas Bukhari</span>, 
+  a passionate student pursuing a degree in Data Sciences at 
+  <span style="color:rgb(59 130 246 / var(--tw-text-opacity, 1)); font-weight:600;">Punjab University (PUCIT) Lahore</span>, Pakistan.
+  I'm dedicated to learning and applying cutting-edge technologies to solve real-world problems.
+  My interests include Artificial Intelligence, Web Development, and Data Science.
+</p>
+
+                    </p>
+                    <div class="flex space-x-4">
+                        
+                        <a href="#contact" class="px-6 py-3 border-2 border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white rounded-lg transition duration-300">
+                            Contact Me
+                        </a>
+                    </div>
+                </div>
+                <div class="md:w-1/2 flex justify-center slide-up" style="animation-delay: 0.2s;">
+                    <div class="relative w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96">
+                        <div class="absolute inset-0 bg-blue-500 rounded-full opacity-10 animate-pulse"></div>
+                        <div class="absolute inset-4 bg-blue-500 rounded-full opacity-20 animate-pulse" style="animation-delay: 0.5s;"></div>
+                        <img src="Me.JPG"
+                             alt="No Image" 
+                             class="relative w-full h-full object-cover rounded-full border-4 border-white dark:border-slate-800 shadow-xl">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-20 bg-slate-100 dark:bg-slate-800">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl md:text-4xl font-bold mb-12 text-center text-slate-800 dark:text-white">
+    <span class="about-text" style="display: inline-block;">
+        About <span class="about-gradient" style="background: linear-gradient(90deg, #3b82f6, #06b6d4); -webkit-background-clip: text; background-clip: text; color: transparent; position: relative;">My University</span>
+    </span>
+</h2>
+
+<style>
+    .about-text {
+        animation: textFocusIn 1.2s cubic-bezier(0.55, 0.085, 0.68, 0.53) both;
+    }
+    
+    .about-gradient {
+        background-size: 200% auto;
+        animation: gradientFlow 4s ease infinite;
+    }
+    
+    .about-gradient::after {
+        content: '';
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        width: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #3b82f6, #06b6d4);
+        animation: underlineExpand 1.5s ease-out 0.8s forwards;
+    }
+
+    /* Reuse existing animations from certifications */
+    @keyframes textFocusIn {
+        0% { transform: scale(0.9); opacity: 0; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+    
+    @keyframes gradientFlow {
+        0% { background-position: 0% center; text-shadow: 0 0 10px rgba(59, 130, 246, 0.3); }
+        50% { background-position: 100% center; text-shadow: 0 0 20px rgba(6, 182, 212, 0.5); }
+        100% { background-position: 0% center; text-shadow: 0 0 10px rgba(59, 130, 246, 0.3); }
+    }
+    
+    @keyframes underlineExpand {
+        0% { width: 0; left: 50%; }
+        100% { width: 100%; left: 0; }
+    }
+</style>
+            
+            <div class="flex flex-col md:flex-row items-center gap-12">
+               <img src="pu.jpg" 
+     alt="Alex Carter" 
+     style="width: auto;" 
+     class="h-64 object-cover rounded-lg shadow-lg">
+
+                
+                <div class="md:w-2/3 fade-in" style="animation-delay: 0.2s;">
+                    <h3 class="text-2xl font-semibold mb-4 text-slate-700 dark:text-slate-300">
+                        Punjab University (PUCIT)
+                    </h3>
+                    <p class="mb-6 text-slate-600 dark:text-slate-400">
+                       <B style="color: #3b82f6;"><i>Punjab University College of Information Technology (PUCIT) </i></b>is one of the leading institutions for computer science and information technology education in Pakistan. Located in Lahore, it operates under the historic University of the Punjab, the oldest and one of the most prestigious public universities in the country.
+                    </p>
+                    <p class="mb-8 text-slate-600 dark:text-slate-400">
+                        <b style="font-size: larger;">Rankings</b><br>
+                        QS World University Rankings:  <span style="color: #3b82f6;">542</span>
+                        <br>
+                        All Pakistan Rankings:   <span style="color: #3b82f6;">2</span>
+                    </p>
+                    
+                    <div class="mb-8">
+                        <h4 class="text-xl font-semibold mb-4 text-slate-700 dark:text-slate-300">
+                             My Journey at PUCIT
+                        </h4>
+                        <div class="flex flex-wrap gap-3">
+                            <span class="skill-badge px-4 py-2 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full">2024-2028</span>
+                            <span class="skill-badge px-4 py-2 bg-pink-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200 rounded-full">Lahore</span>
+                            <span class="skill-badge px-4 py-2 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full">Data Science</span>
+                            <span class="skill-badge px-4 py-2 bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 rounded-full">PUCIT</span>
+                            <span class="skill-badge px-4 py-2 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 rounded-full">Web Development</span>
+                            <span class="skill-badge px-4 py-2 bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 rounded-full">Artificial Intelligence</span>
+                            <span class="skill-badge px-4 py-2 bg-pink-100 dark:bg-pink-900 text-pink-800 dark:text-pink-200 rounded-full">Data Structures</span>
+                            <span class="skill-badge px-4 py-2 bg-orange-100 dark:bg-pink-900 text-pink-800 dark:text-pink-200 rounded-full">DLD</span>
+                        </div>
+                    </div>
+                    
+                   <a href="https://www.pu.edu.pk/" 
+                       target="_blank" 
+                       class="inline-block px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition duration-300 shadow-lg hover:shadow-blue-500/30">
+                      <i class="fas fa-university mr-2"></i> Visit University
+                      </a>
+
+                </div>
+            </div>
+        </div>
+    </section>
+<div>
+    <!-- Projects Grid -->
+<br><br>
+     <h2 class="text-3xl md:text-4xl font-bold mb-4 text-center text-slate-800 dark:text-white">
+     <span style="color: #3f526e;">Studied </span> <span class="text-blue-500" style="text-align: center;">Subjects</span>
+    </h2>
+<div id="projects" style="padding: 25px;" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+  
+  <!-- Project A - Fundamentals of Programming -->
+  <div class="project-card bg-white dark:bg-slate-800 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition duration-300">
+    <div class="h-48 overflow-hidden">
+      <img src="pf.jpeg" alt="Fundamentals of Programming" class="w-full h-full object-cover transition duration-500 hover:scale-105">
+    </div>
+    <div class="p-6">
+      <h3 class="text-xl font-bold mb-2 text-slate-800 dark:text-white">Fundamentals of Programming</h3>
+      <p class="text-slate-600 dark:text-slate-400 mb-4">
+        Key programming principles in C++, including loops, conditions, and arrays.
+      </p>
+      <div class="flex flex-wrap gap-2 mb-4">
+        <span class="text-xs px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded">C++</span>
+        <span class="text-xs px-2 py-1 bg-orange-100 dark:bg-orange-900 text-orange-800 dark:text-orange-200 rounded">Basics</span>
+      </div>
+     
+    </div>
+  </div>
+
+  <!-- Project B - Modern OOP Practices -->
+  <div class="project-card bg-white dark:bg-slate-800 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition duration-300">
+    <div class="h-48 overflow-hidden">
+      <img src="oop.png" alt="Modern OOP Practices" class="w-full h-full object-cover transition duration-500 hover:scale-105">
+    </div>
+    <div class="p-6">
+      <h3 class="text-xl font-bold mb-2 text-slate-800 dark:text-white">Modern OOP Practices</h3>
+      <p class="text-slate-600 dark:text-slate-400 mb-4">
+        Implemented advanced OOP concepts through C++ class-based real-world examples.
+      </p>
+      <div class="flex flex-wrap gap-2 mb-4">
+        <span class="text-xs px-2 py-1 bg-pink-100 dark:bg-pink-900 text-pink-800 dark:text-pink-200 rounded">Encapsulation</span>
+        <span class="text-xs px-2 py-1 bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200 rounded">Inheritance</span>
+      </div>
+     
+    </div>
+  </div>
+
+  <!-- Project C - Data Structures Overview -->
+  <div class="project-card bg-white dark:bg-slate-800 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition duration-300">
+    <div class="h-48 overflow-hidden">
+      <img src="dsa.jpg" alt="Data Structures Overview" class="w-full h-full object-cover transition duration-500 hover:scale-105">
+    </div>
+    <div class="p-6">
+      <h3 class="text-xl font-bold mb-2 text-slate-800 dark:text-white">Data Structures Overview</h3>
+      <p class="text-slate-600 dark:text-slate-400 mb-4">
+        Practical implementation of stacks, queues, trees and sorting algorithms.
+      </p>
+      <div class="flex flex-wrap gap-2 mb-4">
+        <span class="text-xs px-2 py-1 bg-teal-100 dark:bg-teal-900 text-teal-800 dark:text-teal-200 rounded">Trees</span>
+        <span class="text-xs px-2 py-1 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 rounded">Sorting</span>
+      </div>
+      
+    </div>
+  </div>
+
+ <!-- Project D - Digital Circuits Simulation -->
+<div class="project-card bg-white dark:bg-slate-800 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition duration-300">
+  <div class="h-48 overflow-hidden">
+    <img src="dld.jpg" alt="Digital Circuits Simulation" class="w-full h-full object-cover transition duration-500 hover:scale-105">
+  </div>
+  <div class="p-6">
+    <h3 class="text-xl font-bold mb-2 text-slate-800 dark:text-white">Digital Logic Design</h3>
+    <p class="text-slate-600 dark:text-slate-400 mb-4">
+      Simulated combinational and sequential circuits using Logisim, including gates, flip-flops, and counters.
+    </p>
+    <div class="flex flex-wrap gap-2 mb-4">
+      <span class="text-xs px-2 py-1 bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 rounded">Logisim</span>
+      <span class="text-xs px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded">Digital Design</span>
+    </div>
+    
+  </div>
+</div>
+
+<!-- Project E - Probability and Statistics -->
+<div class="project-card bg-white dark:bg-slate-800 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition duration-300">
+  <div class="h-48 overflow-hidden">
+    <img src="prob.jpg" alt="Stats and Probability Toolkit" class="w-full h-full object-cover transition duration-500 hover:scale-105">
+  </div>
+  <div class="p-6">
+    <h3 class="text-xl font-bold mb-2 text-slate-800 dark:text-white">Probability & Statistics</h3>
+    <p class="text-slate-600 dark:text-slate-400 mb-4">
+      Built statistical visualizations and probability models using Excel and descriptive analysis techniques.
+    </p>
+    <div class="flex flex-wrap gap-2 mb-4">
+      <span class="text-xs px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded">Excel</span>
+      <span class="text-xs px-2 py-1 bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 rounded">Statistics</span>
+    </div>
+   >
+  </div>
+</div>
+
+<!-- Project F - Application for Computer & IT -->
+<div class="project-card bg-white dark:bg-slate-800 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition duration-300">
+  <div class="h-48 overflow-hidden">
+    <img src="ict.jpg" alt="Computer & IT Applications" class="w-full h-full object-cover transition duration-500 hover:scale-105">
+  </div>
+  <div class="p-6">
+    <h3 class="text-xl font-bold mb-2 text-slate-800 dark:text-white">Applications for Computer & IT</h3>
+    <p class="text-slate-600 dark:text-slate-400 mb-4">
+      Worked on MS Office tools, digital literacy, file management, and cloud-based applications like Google Workspace.
+    </p>
+    <div class="flex flex-wrap gap-2 mb-4">
+      <span class="text-xs px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded">MS Word</span>
+      <span class="text-xs px-2 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded">Google Docs</span>
+
+  </div>
+</div>
+
+
+</div>
+</div>
+
+   
+
+
+
+    <!-- Experience Section -->
+<section id="experience" class="py-20 bg-slate-100 dark:bg-slate-800">
+  <div class="container mx-auto px-6">
+    <h2 class="text-3xl md:text-4xl font-bold mb-4 text-center text-slate-800 dark:text-white">
+      My <span class="text-blue-500">Journey</span>
+    </h2>
+    <p class="text-lg mb-12 text-center text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+      A timeline of my academic background and learning experiences.
+    </p>
+
+    <div class="relative max-w-2xl mx-auto">
+      <!-- Timeline line -->
+      <div class="absolute left-4 md:left-1/2 h-full w-0.5 bg-blue-500 transform -translate-x-1/2"></div>
+
+      <!-- Timeline items -->
+      <div class="space-y-8">
+        <!-- School -->
+        <div class="relative pl-12 md:pl-0 md:flex justify-between timeline-item">
+          <div class="md:w-5/12 md:pr-8 md:text-right mb-4 md:mb-0">
+            <h3 class="text-xl font-bold text-slate-800 dark:text-white">Matriculation</h3>
+            <p class="text-blue-500">Divisional Model College FSD</p>
+            <p class="text-sm text-slate-500 dark:text-slate-400">2020 - 2021</p>
+          </div>
+          <div class="md:w-5/12 pl-8 md:pl-0">
+            <p class="text-slate-600 dark:text-slate-400">
+              Completed my secondary education with a strong focus on science and mathematics. Participated in science fairs.
+            </p>
+          </div>
+        </div>
+
+        <!-- College -->
+        <div class="relative pl-12 md:pl-0 md:flex justify-between timeline-item">
+          <div class="md:w-5/12 md:pr-8 md:text-right mb-4 md:mb-0 order-1 md:order-none">
+            <h3 class="text-xl font-bold text-slate-800 dark:text-white">Intermediate (FSc Pre-Engineering)</h3>
+            <p class="text-blue-500">Punjab Group Of Colleges</p>
+            <p class="text-sm text-slate-500 dark:text-slate-400">2022 - 2023</p>
+          </div>
+          <div class="md:w-5/12 pl-8 md:pl-0">
+            <p class="text-slate-600 dark:text-slate-400">
+              Focused on mathematics, physics, and computer science. Discovered my passion for programming and problem solving.
+            </p>
+          </div>
+        </div>
+
+        <!-- University -->
+        <div class="relative pl-12 md:pl-0 md:flex justify-between timeline-item">
+          <div class="md:w-5/12 md:pr-8 md:text-right mb-4 md:mb-0">
+            <h3 class="text-xl font-bold text-slate-800 dark:text-white">BS Data Science</h3>
+            <p class="text-blue-500">PUCIT, University of the Punjab</p>
+            <p class="text-sm text-slate-500 dark:text-slate-400">2024 - 2028</p>
+          </div>
+          <div class="md:w-5/12 pl-8 md:pl-0">
+            <p class="text-slate-600 dark:text-slate-400">
+              Currently enrolled in one of Pakistan's top CS institutions. Learning data analysis, machine learning, and real-world problem solving.
+            </p>
+          </div>
+        </div>
+
+        <!-- Web Development -->
+        <div class="relative pl-12 md:pl-0 md:flex justify-between timeline-item">
+          <div class="md:w-5/12 md:pr-8 md:text-right mb-4 md:mb-0 order-1 md:order-none">
+            <h3 class="text-xl font-bold text-slate-800 dark:text-white">Self-Learning Web Development</h3>
+            <p class="text-blue-500">Online Courses & Projects</p>
+            <p class="text-sm text-slate-500 dark:text-slate-400">2024 - Present</p>
+          </div>
+          <div class="md:w-5/12 pl-8 md:pl-0">
+            <p class="text-slate-600 dark:text-slate-400">
+              Built websites using HTML, CSS, JavaScript, React, and Node.js. Worked on real-world portfolio and participated in online challenges.
+            </p>
+          </div>
+        </div>
+
+        <!-- Bonus: AI / Certifications -->
+        <div class="relative pl-12 md:pl-0 md:flex justify-between timeline-item">
+          <div class="md:w-5/12 md:pr-8 md:text-right mb-4 md:mb-0">
+            <h3 class="text-xl font-bold text-slate-800 dark:text-white">AI & Data Science Certifications</h3>
+            <p class="text-blue-500">Coursera, Google, Microsoft</p>
+            <p class="text-sm text-slate-500 dark:text-slate-400">2024 - Present</p>
+          </div>
+          <div class="md:w-5/12 pl-8 md:pl-0">
+            <p class="text-slate-600 dark:text-slate-400">
+              Earned certificates in AI, machine learning, and data science from global platforms. Constantly expanding my skillset.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+    
+     <!-- Contact Section -->
+    <section id="contact" class="py-20 bg-slate-100 dark:bg-slate-800">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4 text-center text-slate-800 dark:text-white">
+                Get In <span class="text-blue-500">Touch</span>
+            </h2>
+            <p class="text-lg mb-12 text-center text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+                Have a project in mind or want to discuss potential opportunities? I'd love to hear from you!
+            </p>
+<!--             
+            <div class="flex flex-col md:flex-row gap-12 max-w-6xl mx-auto">
+                <div class="md:w-1/2 fade-in">
+                    <form id="contact-form" class="space-y-6">
+                        <div>
+                            <label for="name" class="block mb-2 text-sm font-medium text-slate-700 dark:text-slate-300">Your Name</label>
+                            <input type="text" id="name" class="w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200" required>
+                        </div>
+                        <div>
+                            <label for="email" class="block mb-2 text-sm font-medium text-slate-700 dark:text-slate-300">Your Email</label>
+                            <input type="email" id="email" class="w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200" required>
+                        </div>
+                        <div>
+                            <label for="subject" class="block mb-2 text-sm font-medium text-slate-700 dark:text-slate-300">Subject</label>
+                            <input type="text" id="subject" class="w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200" required>
+                        </div>
+                        <div>
+                            <label for="message" class="block mb-2 text-sm font-medium text-slate-700 dark:text-slate-300">Your Message</label>
+                            <textarea id="message" rows="5" class="w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200" required></textarea>
+                        </div>
+                        <button type="submit" class="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition duration-300 shadow-lg hover:shadow-blue-500/30 w-full">
+                            Send Message
+                        </button>
+                    </form>
+                </div> -->
+                
+             
+                    <div class="bg-white dark:bg-slate-700 p-8 rounded-xl shadow-lg h-full">
+                        <h3 class="text-xl font-bold mb-6 text-slate-800 dark:text-white">Contact Information</h3>
+                        
+                        <div class="space-y-6">
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 p-3 bg-blue-100 dark:bg-blue-900 rounded-lg text-blue-500 dark:text-blue-400">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <div class="ml-4">
+                         <h4 class="font-medium text-slate-800 dark:text-white">Email</h4>
+                         <a href="mailto:samiqbukhari51214@gmail.com" class="text-blue-500 hover:text-blue-600 dark:hover:text-blue-400">
+                           samiqbukhari51214@gmail.com
+                         </a>
+                       </div>
+
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 p-3 bg-green-100 dark:bg-green-900 rounded-lg text-green-500 dark:text-green-400">
+                                    <i class="fas fa-phone-alt"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h4 class="font-medium text-slate-800 dark:text-white">Phone</h4>
+                                    <a href="tel:0318-9669802" class="text-blue-500 hover:text-blue-600 dark:hover:text-blue-400">0318-9669802</a>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 p-3 bg-purple-100 dark:bg-purple-900 rounded-lg text-purple-500 dark:text-purple-400">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h4 class="font-medium text-slate-800 dark:text-white">Location</h4>
+                                    <p class="text-slate-600 dark:text-slate-400">Faisalabad</p>
+                                </div>
+                            </div>
+                            
+                            <!-- <div class="flex items-start">
+                                <div class="flex-shrink-0 p-3 bg-red-100 dark:bg-red-900 rounded-lg text-red-500 dark:text-red-400">
+                                    <i class="fab fa-github"></i>
+                                </div> -->
+                                <!-- <div class="ml-4">
+                                    <h4 class="font-medium text-slate-800 dark:text-white">GitHub</h4>
+                                    <a href="https://github.com/Samiq-56" target="_blank" class="text-blue-500 hover:text-blue-600 dark:hover:text-blue-400">https://github.com/Samiq-56</a>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 p-3 bg-blue-100 dark:bg-blue-900 rounded-lg text-blue-500 dark:text-blue-400">
+                                    <i class="fab fa-linkedin-in"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h4 class="font-medium text-slate-800 dark:text-white">LinkedIn</h4>
+                                    <a href="www.linkedin.com/in/samiq-bukhari-ab1377306" target="_blank" class="text-blue-500 hover:text-blue-600 dark:hover:text-blue-400">www.linkedin.com/in/samiq-bukhari</a>
+                                </div>
+                            </div> -->
+                        </div>
+                        
+                        <div class="mt-8">
+                            <div class="flex space-x-4">
+                               
+                                <a href="https://www.instagram.com/syedsamiqabbas?igsh=eXZmczZkMHN4cjJr&utm_source=qr" class="p-3 bg-slate-200 dark:bg-slate-600 rounded-full hover:bg-pink-600 hover:text-white transition">
+                                    <i class="fab fa-instagram">  instagram</i>
+                                    
+                                </a>
+                               
+                                
+                            </div>
+                        </div>
+                    </div>
+                
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+     
+  <footer class="py-8 bg-slate-900 text-white ">
+    <div class="container mx-auto px-4 sm:px-6">
+        <div class="flex flex-col md:flex-row justify-between items-center w-full">
+            <div class="mb-4 md:mb-0 text-center md:text-left">
+                <a href="#home" class="text-xl md:text-2xl font-bold">
+                    <span class="text-blue-400">Syed Samiq</span> Abbas Bukhari
+                </a>
+            </div>
+            
+            <div class="flex flex-wrap justify-center gap-3 md:gap-6 mb-4 md:mb-0">
+                <a href="#home" class="text-sm md:text-base hover:text-blue-400 transition">Home</a>
+                <a href="certifications.html" class="text-sm md:text-base text-blue-500 hover:underline">Achievements</a>
+                <a href="#about" class="text-sm md:text-base hover:text-blue-400 transition">About University</a>
+                <a href="#projects" class="text-sm md:text-base hover:text-blue-400 transition">Subjects</a>
+                <a href="#experience" class="text-sm md:text-base hover:text-blue-400 transition">Journey</a>
+                <a href="#contact" class="text-sm md:text-base hover:text-blue-400 transition">Contact</a>
+            </div>
+            
+            <div class="text-xs md:text-sm text-slate-400 text-center md:text-left">
+                &copy; 2025. All rights reserved.
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // Close mobile menu when clicking a link
+        const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+        mobileMenuLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+        
+        // Theme toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        
+        // Check for saved user preference or use system preference
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            // Toggle the theme
+            document.documentElement.classList.toggle('dark');
+            
+            // Save the preference to localStorage
+            if (document.documentElement.classList.contains('dark')) {
+                localStorage.setItem('color-theme', 'dark');
+            } else {
+                localStorage.setItem('color-theme', 'light');
+            }
+        });
+        
+        // Testimonial slider
+        const testimonials = document.querySelectorAll('.testimonial-slide');
+        const prevButton = document.getElementById('testimonial-prev');
+        const nextButton = document.getElementById('testimonial-next');
+        let currentTestimonial = 0;
+        
+        function showTestimonial(index) {
+            testimonials.forEach((testimonial, i) => {
+                testimonial.classList.remove('active', 'next', 'prev');
+                
+                if (i === index) {
+                    testimonial.classList.add('active');
+                } else if (i === (index + 1) % testimonials.length) {
+                    testimonial.classList.add('next');
+                } else if (i === (index - 1 + testimonials.length) % testimonials.length) {
+                    testimonial.classList.add('prev');
+                } else {
+                    testimonial.classList.add('hidden');
+                }
+            });
+        }
+        
+        prevButton.addEventListener('click', () => {
+            currentTestimonial = (currentTestimonial - 1 + testimonials.length) % testimonials.length;
+            showTestimonial(currentTestimonial);
+        });
+        
+        nextButton.addEventListener('click', () => {
+            currentTestimonial = (currentTestimonial + 1) % testimonials.length;
+            showTestimonial(currentTestimonial);
+        });
+        
+        // Initialize the slider
+        showTestimonial(currentTestimonial);
+        
+        // Auto-rotate testimonials
+        setInterval(() => {
+            currentTestimonial = (currentTestimonial + 1) % testimonials.length;
+            showTestimonial(currentTestimonial);
+        }, 8000);
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // Contact form submission
+        const contactForm = document.getElementById('contact-form');
+        
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Get form values
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const subject = document.getElementById('subject').value;
+            const message = document.getElementById('message').value;
+            
+            // Here you would typically send the data to a server
+            // For this example, we'll just log it and show an alert
+            console.log({ name, email, subject, message });
+            
+            alert('Thank you for your message! I will get back to you soon.');
+            contactForm.reset();
+        });
+        
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fadeIn');
+                }
+            });
+        }, observerOptions);
+        
+        document.querySelectorAll('.fade-in, .slide-up').forEach(element => {
+            observer.observe(element);
+        });
+
+
+
+        
+    </script>
+<!-- WhatsApp Floating Button -->
+<a href="https://wa.me/923189669802?text=Hello!%20How%20can%20I%20help%20you%20%3A%29" 
+   target="_blank"
+   class="whatsapp-float fixed bottom-6 right-6 z-40 w-14 h-14 bg-green-500 hover:bg-green-600 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110">
+   <i class="fab fa-whatsapp text-white text-2xl"></i>
+</a>
+
+<!-- AI Chatbot Button linking to chatbox.html -->
+<a href="ChatBot.html" 
+   class="fixed bottom-24 right-6 z-40 w-14 h-14 bg-purple-600 hover:bg-purple-700 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110 cursor-pointer">
+   <i class="fas fa-robot text-white text-2xl"></i>
+</a>
+
+<!-- Game Button (New!) -->
+<a href="gamelinkpage.html" 
+   class="fixed bottom-40 right-6 z-40 w-14 h-14 bg-blue-600 hover:bg-blue-700 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110 cursor-pointer">
+   <i class="fas fa-gamepad text-white text-2xl"></i>
+</a>
+
+</body>
+</html>
